@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ShoppingCart, DollarSign } from "lucide-react";
 import type { ClientWithDetails } from "@/pages/Clients";
 
 interface AddSalesDialogProps {
@@ -71,49 +72,55 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            🟡 Add Sales
+            <ShoppingCart className="h-5 w-5 text-accent" />
+            Add Sales
           </DialogTitle>
+          <DialogDescription>Create a new invoice for this client</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div>
-              <Label htmlFor="product" className="flex items-center gap-2 text-base">
-                🧡 Product
+              <Label htmlFor="product" className="flex items-center gap-2 font-medium">
+                <ShoppingCart className="h-4 w-4" />
+                Product Name
               </Label>
               <Input
                 id="product"
-                placeholder="Provide Product Name"
+                placeholder="Enter product or service name"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 required
                 className="mt-2"
               />
+              <p className="text-xs text-muted-foreground mt-1">What was sold to the client</p>
             </div>
 
             <div>
-              <Label htmlFor="price" className="flex items-center gap-2 text-base">
-                🟠 Price
+              <Label htmlFor="price" className="flex items-center gap-2 font-medium">
+                <DollarSign className="h-4 w-4" />
+                Price
               </Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
-                placeholder="Provide Price"
+                placeholder="Enter price in KSH"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
                 className="mt-2"
               />
+              <p className="text-xs text-muted-foreground mt-1">Amount to be invoiced</p>
             </div>
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            className="w-full bg-success hover:bg-success/90 text-success-foreground"
             disabled={loading}
           >
-            Add Product
+            {loading ? "Adding..." : "Add Product"}
           </Button>
         </form>
       </DialogContent>

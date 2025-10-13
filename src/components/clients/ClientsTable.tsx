@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, ArrowUpCircle, Receipt, ArrowLeftRight, XCircle } from "lucide-react";
+import { MoreVertical, ArrowUpCircle, Receipt, ArrowLeftRight, XCircle, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -36,14 +46,18 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
   const [salesDialogOpen, setSalesDialogOpen] = useState(false);
   const [transactionsClient, setTransactionsClient] = useState<ClientWithDetails | null>(null);
   const [transactionsDialogOpen, setTransactionsDialogOpen] = useState(false);
+  const [deleteClient, setDeleteClient] = useState<ClientWithDetails | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this client?")) return;
+  const handleDelete = async () => {
+    if (!deleteClient) return;
 
     try {
-      const { error } = await supabase.from("clients").delete().eq("id", id);
+      const { error } = await supabase.from("clients").delete().eq("id", deleteClient.id);
       if (error) throw error;
       toast.success("Client deleted successfully");
+      setDeleteDialogOpen(false);
+      setDeleteClient(null);
       onRefresh();
     } catch (error) {
       console.error("Error deleting client:", error);
@@ -88,22 +102,22 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
     <>
     <Table>
       <TableHeader>
-        <TableRow className="bg-orange-500 hover:bg-orange-500">
-          <TableHead className="text-white font-semibold">Client</TableHead>
-          <TableHead className="text-white font-semibold">Details</TableHead>
-          <TableHead className="text-white font-semibold">Status</TableHead>
-          <TableHead className="text-white font-semibold">Action</TableHead>
+        <TableRow className="bg-accent hover:bg-accent">
+          <TableHead className="text-accent-foreground font-semibold">Client</TableHead>
+          <TableHead className="text-accent-foreground font-semibold">Details</TableHead>
+          <TableHead className="text-accent-foreground font-semibold">Status</TableHead>
+          <TableHead className="text-accent-foreground font-semibold">Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {clients.map((client) => (
-          <TableRow key={client.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <span className="text-green-600">●</span>
+          <TableRow key={client.id} className="hover:bg-muted/50 transition-colors">
+            <TableCell className="py-4">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="h-4 w-4 text-success" />
                 <span className="font-medium">{client.phone_number || client.name}</span>
               </div>
-              <div className="mt-1">
+              <div className="mt-2">
                 <Badge variant="secondary" className="text-xs">
                   Joined {new Date(client.created_at).toLocaleDateString('en-GB', { 
                     day: '2-digit', 
@@ -113,64 +127,67 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
                 </Badge>
               </div>
             </TableCell>
-            <TableCell>
+            <TableCell className="py-4">
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                  Invoiced {client.totalInvoiced.toLocaleString()} ksh
+                <Badge className="bg-warning/20 text-warning-foreground border-warning/30">
+                  Invoiced KSH {client.totalInvoiced.toLocaleString()}
                 </Badge>
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                  Paid {client.totalPaid.toLocaleString()} ksh
+                <Badge className="bg-success/20 text-success-foreground border-success/30">
+                  Paid KSH {client.totalPaid.toLocaleString()}
                 </Badge>
-                <Badge className="bg-cyan-100 text-cyan-800 hover:bg-cyan-100">
-                  Balance {Number(client.total_balance).toLocaleString()}ksh
+                <Badge className="bg-info/20 text-info-foreground border-info/30">
+                  Balance KSH {Number(client.total_balance).toLocaleString()}
                 </Badge>
               </div>
             </TableCell>
-            <TableCell>
+            <TableCell className="py-4">
               <Badge 
                 variant="outline" 
                 className={
                   client.status === "active"
-                    ? "bg-green-50 text-green-700 border-green-200"
-                    : "bg-gray-50 text-gray-700 border-gray-200"
+                    ? "bg-success/10 text-success border-success/30"
+                    : "bg-muted text-muted-foreground border-border"
                 }
               >
                 {client.status === "active" ? "OPEN" : "CLOSED"}
               </Badge>
             </TableCell>
-            <TableCell>
+            <TableCell className="py-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="border-orange-400 text-orange-600 hover:bg-orange-50">
+                  <Button variant="outline" className="border-accent/50 text-accent hover:bg-accent/10">
                     <MoreVertical className="h-4 w-4 mr-1" />
                     Action
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background z-50">
+                <DropdownMenuContent align="end" className="bg-popover z-50">
                   <DropdownMenuItem 
-                    className="text-orange-600"
+                    className="text-accent cursor-pointer"
                     onClick={() => handleTopUp(client)}
                   >
                     <ArrowUpCircle className="h-4 w-4 mr-2" />
                     Top Up
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    className="text-green-600"
+                    className="text-success cursor-pointer"
                     onClick={() => handleViewSales(client)}
                   >
                     <Receipt className="h-4 w-4 mr-2" />
                     View Sales
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    className="text-green-600"
+                    className="text-info cursor-pointer"
                     onClick={() => handleViewTransactions(client)}
                   >
                     <ArrowLeftRight className="h-4 w-4 mr-2" />
                     View Transactions
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => handleDelete(client.id)}
-                    className="text-red-600"
+                    onClick={() => {
+                      setDeleteClient(client);
+                      setDeleteDialogOpen(true);
+                    }}
+                    className="text-destructive cursor-pointer"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
                     Drop Invoice Account
@@ -197,6 +214,22 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
       onClose={handleTransactionsClose}
       client={transactionsClient}
     />
+    <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete the client "{deleteClient?.name}" and all associated records. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            Delete Client
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </>
   );
 }

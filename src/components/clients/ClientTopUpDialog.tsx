@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Coins } from "lucide-react";
+import { CalendarIcon, Coins, TrendingUp, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,44 +85,41 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Coins className="h-5 w-5 text-orange-500" />
-            Client Account Topup
+            <Coins className="h-5 w-5 text-accent" />
+            Client Account Top-up
           </DialogTitle>
+          <DialogDescription>Add payment to client account balance</DialogDescription>
         </DialogHeader>
-        <div className="sr-only">Top up client account balance</div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label className="text-orange-600 flex items-center gap-2 mb-3">
-              <span className="text-sm">💰</span>
-              Provide Top-up amount
-            </Label>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="border-2 border-yellow-400 rounded-lg p-4 bg-yellow-50">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-yellow-600">💰</span>
-                  <span className="font-semibold text-yellow-800">
-                    {client.totalInvoiced.toLocaleString()} ksh
+            <h3 className="text-sm font-semibold mb-3">Financial Summary</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border border-warning/30 rounded-lg p-4 bg-warning/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coins className="h-5 w-5 text-warning" />
+                  <span className="font-semibold text-lg">
+                    KSH {client.totalInvoiced.toLocaleString()}
                   </span>
                 </div>
-                <div className="text-xs text-gray-600">Invoiced</div>
+                <div className="text-xs text-muted-foreground">Total Invoiced</div>
               </div>
-              <div className="border-2 border-green-400 rounded-lg p-4 bg-green-50">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-green-600">💰</span>
-                  <span className="font-semibold text-green-800">
-                    {Number(client.total_balance).toLocaleString()} ksh
+              <div className="border border-success/30 rounded-lg p-4 bg-success/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="h-5 w-5 text-success" />
+                  <span className="font-semibold text-lg">
+                    KSH {Number(client.total_balance).toLocaleString()}
                   </span>
                 </div>
-                <div className="text-xs text-gray-600">Balance</div>
+                <div className="text-xs text-muted-foreground">Current Balance</div>
               </div>
             </div>
           </div>
 
           <div>
-            <Label className="text-orange-600 flex items-center gap-2 mb-2">
-              <span className="text-sm">📅</span>
-              AddedOn
+            <Label className="flex items-center gap-2 mb-2 font-medium">
+              <CalendarIcon className="h-4 w-4" />
+              Payment Date
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -150,13 +147,13 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
           </div>
 
           <div>
-            <Label className="text-orange-600 flex items-center gap-2 mb-2">
-              <span className="text-sm">💵</span>
-              Top up Amount
+            <Label className="flex items-center gap-2 mb-2 font-medium">
+              <DollarSign className="h-4 w-4" />
+              Top-up Amount
             </Label>
             <Input
               type="number"
-              placeholder="Amount"
+              placeholder="Enter amount in KSH"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full"
@@ -164,15 +161,16 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
               step="0.01"
               required
             />
+            <p className="text-xs text-muted-foreground mt-1">Enter the payment amount</p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button
               type="submit"
-              className="flex-1 bg-orange-500 hover:bg-orange-600"
+              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
               disabled={loading}
             >
-              Top Up Account
+              {loading ? "Processing..." : "Top Up Account"}
             </Button>
             <Button
               type="button"
@@ -180,7 +178,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
               className="flex-1"
               onClick={onClose}
             >
-              Back to List
+              Cancel
             </Button>
           </div>
         </form>
