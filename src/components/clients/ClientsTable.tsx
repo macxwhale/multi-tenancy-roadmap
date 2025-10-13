@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { ClientTopUpDialog } from "./ClientTopUpDialog";
+import { ClientSalesDialog } from "./ClientSalesDialog";
 import type { ClientWithDetails } from "@/pages/Clients";
 
 interface ClientsTableProps {
@@ -30,6 +31,8 @@ interface ClientsTableProps {
 export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) {
   const [topUpClient, setTopUpClient] = useState<ClientWithDetails | null>(null);
   const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
+  const [salesClient, setSalesClient] = useState<ClientWithDetails | null>(null);
+  const [salesDialogOpen, setSalesDialogOpen] = useState(false);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this client?")) return;
@@ -53,6 +56,17 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
   const handleTopUpClose = () => {
     setTopUpDialogOpen(false);
     setTopUpClient(null);
+    onRefresh();
+  };
+
+  const handleViewSales = (client: ClientWithDetails) => {
+    setSalesClient(client);
+    setSalesDialogOpen(true);
+  };
+
+  const handleSalesClose = () => {
+    setSalesDialogOpen(false);
+    setSalesClient(null);
     onRefresh();
   };
 
@@ -126,7 +140,10 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
                     <ArrowUpCircle className="h-4 w-4 mr-2" />
                     Top Up
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-green-600">
+                  <DropdownMenuItem 
+                    className="text-green-600"
+                    onClick={() => handleViewSales(client)}
+                  >
                     <Receipt className="h-4 w-4 mr-2" />
                     View Sales
                   </DropdownMenuItem>
@@ -152,6 +169,11 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
       open={topUpDialogOpen}
       onClose={handleTopUpClose}
       client={topUpClient}
+    />
+    <ClientSalesDialog
+      open={salesDialogOpen}
+      onClose={handleSalesClose}
+      client={salesClient}
     />
   </>
   );
