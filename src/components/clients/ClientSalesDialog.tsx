@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Receipt, MoreVertical } from "lucide-react";
+import { Receipt, MoreVertical, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AddSalesDialog } from "./AddSalesDialog";
 import {
   Table,
   TableBody,
@@ -32,6 +33,7 @@ interface ClientSalesDialogProps {
 export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogProps) {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(false);
+  const [addSalesDialogOpen, setAddSalesDialogOpen] = useState(false);
 
   useEffect(() => {
     if (open && client) {
@@ -130,9 +132,19 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
 
           {/* Invoiced Items */}
           <div>
-            <div className="text-sm font-medium mb-2 flex items-center gap-2">
-              <span className="text-orange-500">⭐</span>
-              <span className="text-orange-600">Sales Ledger</span>
+            <div className="text-sm font-medium mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-orange-500">⭐</span>
+                <span className="text-orange-600">Sales Ledger</span>
+              </div>
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => setAddSalesDialogOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Sales
+              </Button>
             </div>
             <div className="border rounded-lg overflow-hidden">
               <Table>
@@ -206,6 +218,14 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
           </div>
         </div>
       </DialogContent>
+      <AddSalesDialog
+        open={addSalesDialogOpen}
+        onClose={() => {
+          setAddSalesDialogOpen(false);
+          fetchInvoices();
+        }}
+        client={client}
+      />
     </Dialog>
   );
 }
