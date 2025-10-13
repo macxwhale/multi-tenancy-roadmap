@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Trash, MoreVertical, Eye, FileText } from "lucide-react";
+import { MoreVertical, ArrowUpCircle, Receipt, ArrowLeftRight, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -101,25 +101,25 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
                     Action
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onEdit(client)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                <DropdownMenuContent align="end" className="bg-background z-50">
+                  <DropdownMenuItem className="text-orange-600">
+                    <ArrowUpCircle className="h-4 w-4 mr-2" />
+                    Top Up
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Details
+                  <DropdownMenuItem className="text-green-600">
+                    <Receipt className="h-4 w-4 mr-2" />
+                    View Sales
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <FileText className="h-4 w-4 mr-2" />
-                    View Invoices
+                  <DropdownMenuItem className="text-green-600">
+                    <ArrowLeftRight className="h-4 w-4 mr-2" />
+                    View Transactions
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => handleDelete(client.id)}
                     className="text-red-600"
                   >
-                    <Trash className="h-4 w-4 mr-2" />
-                    Delete
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Drop Invoice Account
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
