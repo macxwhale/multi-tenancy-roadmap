@@ -89,6 +89,7 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
             Client Account
           </DialogTitle>
         </DialogHeader>
+        <div className="sr-only">View client sales and invoices</div>
 
         <div className="space-y-6">
           {/* Client Info */}

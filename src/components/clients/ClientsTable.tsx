@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ClientTopUpDialog } from "./ClientTopUpDialog";
 import { ClientSalesDialog } from "./ClientSalesDialog";
+import { ClientTransactionsDialog } from "./ClientTransactionsDialog";
 import type { ClientWithDetails } from "@/pages/Clients";
 
 interface ClientsTableProps {
@@ -33,6 +34,8 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
   const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
   const [salesClient, setSalesClient] = useState<ClientWithDetails | null>(null);
   const [salesDialogOpen, setSalesDialogOpen] = useState(false);
+  const [transactionsClient, setTransactionsClient] = useState<ClientWithDetails | null>(null);
+  const [transactionsDialogOpen, setTransactionsDialogOpen] = useState(false);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this client?")) return;
@@ -67,6 +70,17 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
   const handleSalesClose = () => {
     setSalesDialogOpen(false);
     setSalesClient(null);
+    onRefresh();
+  };
+
+  const handleViewTransactions = (client: ClientWithDetails) => {
+    setTransactionsClient(client);
+    setTransactionsDialogOpen(true);
+  };
+
+  const handleTransactionsClose = () => {
+    setTransactionsDialogOpen(false);
+    setTransactionsClient(null);
     onRefresh();
   };
 
@@ -147,7 +161,10 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
                     <Receipt className="h-4 w-4 mr-2" />
                     View Sales
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-green-600">
+                  <DropdownMenuItem 
+                    className="text-green-600"
+                    onClick={() => handleViewTransactions(client)}
+                  >
                     <ArrowLeftRight className="h-4 w-4 mr-2" />
                     View Transactions
                   </DropdownMenuItem>
@@ -174,6 +191,11 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
       open={salesDialogOpen}
       onClose={handleSalesClose}
       client={salesClient}
+    />
+    <ClientTransactionsDialog
+      open={transactionsDialogOpen}
+      onClose={handleTransactionsClose}
+      client={transactionsClient}
     />
   </>
   );

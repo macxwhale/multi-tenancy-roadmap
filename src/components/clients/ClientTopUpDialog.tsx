@@ -89,6 +89,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             Client Account Topup
           </DialogTitle>
         </DialogHeader>
+        <div className="sr-only">Top up client account balance</div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
