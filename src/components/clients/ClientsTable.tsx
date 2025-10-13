@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Trash, MoreVertical, Eye, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -10,13 +10,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Client = Tables<"clients">;
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import type { ClientWithDetails } from "@/pages/Clients";
 
 interface ClientsTableProps {
-  clients: Client[];
-  onEdit: (client: Client) => void;
+  clients: ClientWithDetails[];
+  onEdit: (client: ClientWithDetails) => void;
   onRefresh: () => void;
 }
 
@@ -38,44 +43,86 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Phone</TableHead>
-          <TableHead>Balance</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+        <TableRow className="bg-orange-500 hover:bg-orange-500">
+          <TableHead className="text-white font-semibold">Client</TableHead>
+          <TableHead className="text-white font-semibold">Details</TableHead>
+          <TableHead className="text-white font-semibold">Status</TableHead>
+          <TableHead className="text-white font-semibold">Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {clients.map((client) => (
           <TableRow key={client.id}>
-            <TableCell className="font-medium">{client.name}</TableCell>
-            <TableCell>{client.email || "-"}</TableCell>
-            <TableCell>{client.phone_number || "-"}</TableCell>
-            <TableCell>KES {Number(client.total_balance).toLocaleString()}</TableCell>
             <TableCell>
-              <span
-                className={`px-2 py-1 rounded-full text-xs ${
-                  client.status === "active"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {client.status}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-green-600">●</span>
+                <span className="font-medium">{client.phone_number || client.name}</span>
+              </div>
+              <div className="mt-1">
+                <Badge variant="secondary" className="text-xs">
+                  Joined {new Date(client.created_at).toLocaleDateString('en-GB', { 
+                    day: '2-digit', 
+                    month: 'short', 
+                    year: 'numeric' 
+                  })}
+                </Badge>
+              </div>
             </TableCell>
-            <TableCell className="text-right">
-              <Button variant="ghost" size="icon" onClick={() => onEdit(client)}>
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleDelete(client.id)}
+            <TableCell>
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                  Invoiced {client.totalInvoiced.toLocaleString()} ksh
+                </Badge>
+                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                  Paid {client.totalPaid.toLocaleString()} ksh
+                </Badge>
+                <Badge className="bg-cyan-100 text-cyan-800 hover:bg-cyan-100">
+                  Balance {Number(client.total_balance).toLocaleString()}ksh
+                </Badge>
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge 
+                variant="outline" 
+                className={
+                  client.status === "active"
+                    ? "bg-green-50 text-green-700 border-green-200"
+                    : "bg-gray-50 text-gray-700 border-gray-200"
+                }
               >
-                <Trash className="h-4 w-4" />
-              </Button>
+                {client.status === "active" ? "OPEN" : "CLOSED"}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="border-orange-400 text-orange-600 hover:bg-orange-50">
+                    <MoreVertical className="h-4 w-4 mr-1" />
+                    Action
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onEdit(client)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <FileText className="h-4 w-4 mr-2" />
+                    View Invoices
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleDelete(client.id)}
+                    className="text-red-600"
+                  >
+                    <Trash className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TableCell>
           </TableRow>
         ))}

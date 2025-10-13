@@ -9,8 +9,13 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type Client = Tables<"clients">;
 
+export interface ClientWithDetails extends Client {
+  totalInvoiced: number;
+  totalPaid: number;
+}
+
 export default function Clients() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<ClientWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -21,13 +26,40 @@ export default function Clients() {
 
   const fetchClients = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: clientsData, error: clientsError } = await supabase
         .from("clients")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setClients(data || []);
+      if (clientsError) throw clientsError;
+
+      // Fetch invoices and transactions for each client
+      const clientsWithDetails = await Promise.all(
+        (clientsData || []).map(async (client) => {
+          const [{ data: invoices }, { data: transactions }] = await Promise.all([
+            supabase
+              .from("invoices")
+              .select("amount")
+              .eq("client_id", client.id),
+            supabase
+              .from("transactions")
+              .select("amount")
+              .eq("client_id", client.id)
+              .eq("type", "payment"),
+          ]);
+
+          const totalInvoiced = invoices?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+          const totalPaid = transactions?.reduce((sum, txn) => sum + Number(txn.amount), 0) || 0;
+
+          return {
+            ...client,
+            totalInvoiced,
+            totalPaid,
+          };
+        })
+      );
+
+      setClients(clientsWithDetails);
     } catch (error) {
       console.error("Error fetching clients:", error);
     } finally {
@@ -35,7 +67,7 @@ export default function Clients() {
     }
   };
 
-  const handleEdit = (client: Client) => {
+  const handleEdit = (client: ClientWithDetails) => {
     setEditingClient(client);
     setDialogOpen(true);
   };
