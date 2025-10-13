@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, DollarSign } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { supabase } from "@/integrations/supabase/client";
 import { TransactionsTable } from "@/components/transactions/TransactionsTable";
 import { TransactionDialog } from "@/components/transactions/TransactionDialog";
@@ -63,11 +64,23 @@ export default function Transactions() {
         </Button>
       </div>
 
-      <TransactionsTable
-        transactions={transactions}
-        onEdit={handleEdit}
-        onRefresh={fetchTransactions}
-      />
+      {transactions.length === 0 ? (
+        <EmptyState
+          icon={DollarSign}
+          title="No transactions yet"
+          description="Record your first transaction to start tracking payments and sales."
+          action={{
+            label: "Add Transaction",
+            onClick: () => setDialogOpen(true),
+          }}
+        />
+      ) : (
+        <TransactionsTable
+          transactions={transactions}
+          onEdit={handleEdit}
+          onRefresh={fetchTransactions}
+        />
+      )}
       <TransactionDialog
         open={dialogOpen}
         onClose={handleDialogClose}

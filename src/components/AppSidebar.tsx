@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileText, DollarSign, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, FileText, DollarSign, Package, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const menuItems = [
   { title: "Clients", url: "/clients", icon: Users },
   { title: "Invoices", url: "/invoices", icon: FileText },
   { title: "Transactions", url: "/transactions", icon: DollarSign },
+  { title: "Products", url: "/products", icon: Package },
 ];
 
 export function AppSidebar() {

@@ -1,49 +1,49 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2, FileText } from "lucide-react";
+import { Plus, Loader2, Package } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { supabase } from "@/integrations/supabase/client";
-import { InvoicesTable } from "@/components/invoices/InvoicesTable";
-import { InvoiceDialog } from "@/components/invoices/InvoiceDialog";
+import { ProductsTable } from "@/components/products/ProductsTable";
+import { ProductDialog } from "@/components/products/ProductDialog";
 import type { Tables } from "@/integrations/supabase/types";
 
-type Invoice = Tables<"invoices">;
+type Product = Tables<"products">;
 
-export default function Invoices() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+export default function Products() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    fetchInvoices();
+    fetchProducts();
   }, []);
 
-  const fetchInvoices = async () => {
+  const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
-        .from("invoices")
+        .from("products")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setInvoices(data || []);
+      setProducts(data || []);
     } catch (error) {
-      console.error("Error fetching invoices:", error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (invoice: Invoice) => {
-    setEditingInvoice(invoice);
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
     setDialogOpen(true);
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
-    setEditingInvoice(null);
-    fetchInvoices();
+    setEditingProduct(null);
+    fetchProducts();
   };
 
   if (loading) {
@@ -57,30 +57,30 @@ export default function Invoices() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Invoices</h1>
+        <h1 className="text-3xl font-bold">Products</h1>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Create Invoice
+          Add Product
         </Button>
       </div>
 
-      {invoices.length === 0 ? (
+      {products.length === 0 ? (
         <EmptyState
-          icon={FileText}
-          title="No invoices yet"
-          description="Create your first invoice to start tracking sales."
+          icon={Package}
+          title="No products yet"
+          description="Add products to your inventory to use them in invoices."
           action={{
-            label: "Create Invoice",
+            label: "Add Product",
             onClick: () => setDialogOpen(true),
           }}
         />
       ) : (
-        <InvoicesTable invoices={invoices} onEdit={handleEdit} onRefresh={fetchInvoices} />
+        <ProductsTable products={products} onEdit={handleEdit} onRefresh={fetchProducts} />
       )}
-      <InvoiceDialog
+      <ProductDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        invoice={editingInvoice}
+        product={editingProduct}
       />
     </div>
   );

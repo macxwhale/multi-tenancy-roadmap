@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Users } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { supabase } from "@/integrations/supabase/client";
 import { ClientsTable } from "@/components/clients/ClientsTable";
 import { ClientDialog } from "@/components/clients/ClientDialog";
@@ -63,7 +64,19 @@ export default function Clients() {
         </Button>
       </div>
 
-      <ClientsTable clients={clients} onEdit={handleEdit} onRefresh={fetchClients} />
+      {clients.length === 0 ? (
+        <EmptyState
+          icon={Users}
+          title="No clients yet"
+          description="Get started by adding your first client to the system."
+          action={{
+            label: "Add Client",
+            onClick: () => setDialogOpen(true),
+          }}
+        />
+      ) : (
+        <ClientsTable clients={clients} onEdit={handleEdit} onRefresh={fetchClients} />
+      )}
       <ClientDialog
         open={dialogOpen}
         onClose={handleDialogClose}
