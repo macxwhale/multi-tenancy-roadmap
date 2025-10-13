@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -111,17 +112,20 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{client ? "Edit Client" : "Add Client"}</DialogTitle>
+          <DialogDescription>
+            {client ? "Update client information" : "Add a new client to your system"}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Client Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="Enter client name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,9 +136,9 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input type="email" placeholder="client@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,7 +149,7 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
               name="phone_number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>Phone Number (Optional)</FormLabel>
                   <FormControl>
                     <Input placeholder="0712345678" {...field} />
                   </FormControl>
@@ -153,9 +157,14 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              {client ? "Update" : "Create"}
-            </Button>
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" className="flex-1">
+                {client ? "Update Client" : "Create Client"}
+              </Button>
+              <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
+                Cancel
+              </Button>
+            </div>
           </form>
         </Form>
       </DialogContent>

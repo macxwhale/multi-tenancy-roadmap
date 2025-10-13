@@ -80,8 +80,20 @@ export default function Clients() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="h-9 w-32 bg-muted animate-pulse rounded" />
+          <div className="h-10 w-32 bg-muted animate-pulse rounded" />
+        </div>
+        <div className="border rounded-lg overflow-hidden">
+          <div className="bg-accent h-12 w-full" />
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border-t p-4 space-y-3">
+              <div className="h-4 bg-muted animate-pulse rounded w-1/4" />
+              <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
