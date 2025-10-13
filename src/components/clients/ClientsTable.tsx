@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, ArrowUpCircle, Receipt, ArrowLeftRight, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { ClientTopUpDialog } from "./ClientTopUpDialog";
 import type { ClientWithDetails } from "@/pages/Clients";
 
 interface ClientsTableProps {
@@ -26,6 +28,9 @@ interface ClientsTableProps {
 }
 
 export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) {
+  const [topUpClient, setTopUpClient] = useState<ClientWithDetails | null>(null);
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
+
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this client?")) return;
 
@@ -40,7 +45,19 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
     }
   };
 
+  const handleTopUp = (client: ClientWithDetails) => {
+    setTopUpClient(client);
+    setTopUpDialogOpen(true);
+  };
+
+  const handleTopUpClose = () => {
+    setTopUpDialogOpen(false);
+    setTopUpClient(null);
+    onRefresh();
+  };
+
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow className="bg-orange-500 hover:bg-orange-500">
@@ -102,7 +119,10 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background z-50">
-                  <DropdownMenuItem className="text-orange-600">
+                  <DropdownMenuItem 
+                    className="text-orange-600"
+                    onClick={() => handleTopUp(client)}
+                  >
                     <ArrowUpCircle className="h-4 w-4 mr-2" />
                     Top Up
                   </DropdownMenuItem>
@@ -128,5 +148,11 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
         ))}
       </TableBody>
     </Table>
+    <ClientTopUpDialog
+      open={topUpDialogOpen}
+      onClose={handleTopUpClose}
+      client={topUpClient}
+    />
+  </>
   );
 }
