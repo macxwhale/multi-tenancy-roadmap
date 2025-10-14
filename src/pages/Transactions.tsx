@@ -78,7 +78,7 @@ export default function Transactions() {
         <EmptyState
           icon={DollarSign}
           title="No transactions yet"
-          description="Record your first transaction to start tracking payments and sales."
+          description="Take it easy. Your transaction history will build naturally over time."
           action={{
             label: "Add Transaction",
             onClick: () => setDialogOpen(true),

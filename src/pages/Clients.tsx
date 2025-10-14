@@ -112,7 +112,7 @@ export default function Clients() {
         <EmptyState
           icon={Users}
           title="No clients yet"
-          description="Get started by adding your first client to the system."
+          description="Take your time. Start building lasting relationships by adding your first client—there's no rush."
           action={{
             label: "Add Client",
             onClick: () => setDialogOpen(true),

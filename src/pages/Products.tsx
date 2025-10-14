@@ -78,7 +78,7 @@ export default function Products() {
         <EmptyState
           icon={Package}
           title="No products yet"
-          description="Add products to your inventory to use them in invoices."
+          description="Build your catalog at your own pace. Add products when you're ready."
           action={{
             label: "Add Product",
             onClick: () => setDialogOpen(true),

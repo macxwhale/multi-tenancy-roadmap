@@ -78,7 +78,7 @@ export default function Invoices() {
         <EmptyState
           icon={FileText}
           title="No invoices yet"
-          description="Create your first invoice to start tracking sales."
+          description="When you're ready, create your first invoice. Every journey starts with a single step."
           action={{
             label: "Create Invoice",
             onClick: () => setDialogOpen(true),

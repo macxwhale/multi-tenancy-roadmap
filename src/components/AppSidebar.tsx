@@ -41,7 +41,12 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <div className="p-4 border-b border-sidebar-border">
-        {state === "expanded" && <h1 className="text-xl font-bold text-sidebar-primary">Cart-Trace</h1>}
+        {state === "expanded" && (
+          <div>
+            <h1 className="text-xl font-bold text-sidebar-primary">Nunua Polepole</h1>
+            <p className="text-xs text-sidebar-foreground/60 mt-1">Buy slowly, build trust</p>
+          </div>
+        )}
       </div>
 
       <SidebarContent>
