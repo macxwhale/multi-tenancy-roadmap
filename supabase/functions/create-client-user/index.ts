@@ -9,9 +9,9 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password, metadata } = await req.json();
-    if (!email || !password) {
-      return new Response(JSON.stringify({ error: "Missing email or password" }), {
+    const { email, password, metadata, tenantId, phoneNumber } = await req.json();
+    if (!email || !password || !tenantId || !phoneNumber) {
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
         headers: { "Content-Type": "application/json" },
         status: 400,
       });
@@ -22,6 +22,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Create auth user
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -31,6 +32,25 @@ serve(async (req) => {
 
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    // Create profile for the client user
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .insert({
+        user_id: data.user!.id,
+        tenant_id: tenantId,
+        full_name: phoneNumber,
+        phone_number: phoneNumber,
+      });
+
+    if (profileError) {
+      // Rollback: delete the auth user if profile creation fails
+      await supabaseAdmin.auth.admin.deleteUser(data.user!.id);
+      return new Response(JSON.stringify({ error: profileError.message }), {
         headers: { "Content-Type": "application/json" },
         status: 400,
       });

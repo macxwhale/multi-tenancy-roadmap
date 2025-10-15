@@ -96,6 +96,8 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
             email: `${data.phone_number}@client.internal`,
             password: pin,
             metadata: { role: 'client', phone_number: data.phone_number },
+            tenantId: profile.tenant_id,
+            phoneNumber: data.phone_number,
           },
         });
 
