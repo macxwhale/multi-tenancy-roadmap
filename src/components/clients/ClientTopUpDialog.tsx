@@ -108,7 +108,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-5 w-5 text-success" />
                   <span className="font-semibold text-lg">
-                    KSH {Number(client.total_balance).toLocaleString()}
+                    KSH {(client.totalInvoiced - client.totalPaid).toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Current Balance</div>
