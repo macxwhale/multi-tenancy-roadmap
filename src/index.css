@@ -64,15 +64,15 @@ All colors MUST be HSL.
     /* Border radius - Modern approach */
     --radius: 0.75rem;
 
-    /* Sidebar - Modern with depth */
+    /* Sidebar - Dark modern with depth */
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent: 220 15% 20%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 32% 17%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-ring: 217 91% 60%;
 
     /* Enhanced Elevation System */
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);

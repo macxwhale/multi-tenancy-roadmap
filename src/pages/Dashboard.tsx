@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, FileText, DollarSign, TrendingUp } from "lucide-react";
+import { Users, FileText, DollarSign, TrendingUp, MapPin } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "@/components/ui/badge";
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalClients: 0,
     totalInvoices: 0,
@@ -12,6 +15,21 @@ export default function Dashboard() {
     totalRevenue: 0,
   });
   const [loading, setLoading] = useState(true);
+
+  const getUserName = () => {
+    if (!user) return "there";
+    const name = user.user_metadata?.full_name || user.email?.split('@')[0] || "there";
+    return name.split(' ')[0];
+  };
+
+  const getCurrentTime = () => {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  };
 
   useEffect(() => {
     fetchStats();
@@ -60,9 +78,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">Welcome back! Here's an overview of your business.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
+            Hello, {getUserName()}
+          </h1>
+          <p className="text-muted-foreground">
+            Here's a summary of your account activity for this week.
+          </p>
+        </div>
+        <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 text-sm">
+          <MapPin className="h-4 w-4" />
+          Nairobi, Kenya – {getCurrentTime()}
+        </Badge>
       </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
