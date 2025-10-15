@@ -41,7 +41,7 @@ export function ClientRow({ client, onEdit, onRefresh, mobileActions }: ClientRo
           </div>
           <div className="flex items-center gap-2 text-xs">
             <span className="text-muted-foreground font-medium w-16">Balance</span>
-            <span className="font-semibold text-accent">{formatCurrency(client.total_balance)}</span>
+            <span className="font-semibold text-accent">{formatCurrency(client.totalInvoiced - client.totalPaid)}</span>
           </div>
         </div>
       </TableCell>
