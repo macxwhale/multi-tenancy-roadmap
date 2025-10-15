@@ -3,16 +3,29 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
+    return new Response("Method Not Allowed", { status: 405, headers: corsHeaders });
   }
 
   try {
     const { email, password, metadata, tenantId, phoneNumber } = await req.json();
+    console.log("Creating client user with phone:", phoneNumber);
+    
     if (!email || !password || !tenantId || !phoneNumber) {
+      console.error("Missing required fields:", { email: !!email, password: !!password, tenantId: !!tenantId, phoneNumber: !!phoneNumber });
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
@@ -23,6 +36,7 @@ serve(async (req) => {
     );
 
     // Create auth user
+    console.log("Creating auth user...");
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -31,13 +45,17 @@ serve(async (req) => {
     });
 
     if (error) {
+      console.error("Auth user creation failed:", error);
       return new Response(JSON.stringify({ error: error.message }), {
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
+    console.log("Auth user created successfully:", data.user!.id);
+
     // Create profile for the client user
+    console.log("Creating profile...");
     const { error: profileError } = await supabaseAdmin
       .from("profiles")
       .insert({
@@ -48,22 +66,48 @@ serve(async (req) => {
       });
 
     if (profileError) {
+      console.error("Profile creation failed:", profileError);
       // Rollback: delete the auth user if profile creation fails
       await supabaseAdmin.auth.admin.deleteUser(data.user!.id);
       return new Response(JSON.stringify({ error: profileError.message }), {
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
 
+    console.log("Profile created successfully");
+
+    // Assign client role
+    console.log("Assigning client role...");
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .insert({
+        user_id: data.user!.id,
+        role: 'client',
+      });
+
+    if (roleError) {
+      console.error("Role assignment failed:", roleError);
+      // Rollback: delete profile and auth user
+      await supabaseAdmin.from("profiles").delete().eq("user_id", data.user!.id);
+      await supabaseAdmin.auth.admin.deleteUser(data.user!.id);
+      return new Response(JSON.stringify({ error: roleError.message }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    console.log("Client role assigned successfully");
+
     return new Response(
       JSON.stringify({ userId: data.user?.id, email: data.user?.email }),
-      { headers: { "Content-Type": "application/json" }, status: 200 }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : (typeof e === 'string' ? e : 'Unknown error');
+    console.error("Unexpected error:", msg);
     return new Response(JSON.stringify({ error: msg }), {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
   }

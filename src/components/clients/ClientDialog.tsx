@@ -26,7 +26,7 @@ import type { Tables } from "@/integrations/supabase/types";
 const clientSchema = z.object({
   phone_number: z
     .string()
-    .regex(/^07\d{8}$/, "Phone must be 10 digits starting with 07")
+    .regex(/^0\d{9}$/, "Phone must be 10 digits starting with 0")
     .min(1, "Phone number is required"),
 });
 
@@ -119,9 +119,10 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
       }
 
       onClose();
-    } catch (error) {
+      } catch (error) {
       console.error("Error saving client:", error);
-      toast.error("Failed to save client");
+      const errorMessage = error instanceof Error ? error.message : "Failed to save client";
+      toast.error(errorMessage);
     }
   };
 
