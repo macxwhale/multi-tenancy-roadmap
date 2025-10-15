@@ -9,9 +9,14 @@ interface ClientRowProps {
   client: ClientWithDetails;
   onEdit: (client: ClientWithDetails) => void;
   onRefresh: () => void;
+  mobileActions?: boolean;
 }
 
-export function ClientRow({ client, onEdit, onRefresh }: ClientRowProps) {
+export function ClientRow({ client, onEdit, onRefresh, mobileActions }: ClientRowProps) {
+  if (mobileActions) {
+    return <ClientActions client={client} onEdit={onEdit} onRefresh={onRefresh} />;
+  }
+
   return (
     <TableRow className="group hover:bg-muted/30 transition-colors duration-150 border-b border-border/30">
       <TableCell className="py-4">
