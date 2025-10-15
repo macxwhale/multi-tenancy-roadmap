@@ -15,20 +15,12 @@ export function ClientRow({ client, onEdit, onRefresh }: ClientRowProps) {
   return (
     <TableRow className="group hover:bg-muted/30 transition-colors duration-150 border-b border-border/30">
       <TableCell className="py-4">
-        <div className="flex items-center gap-3">
-          <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center border border-accent/20">
-              <CheckCircle className="h-5 w-5 text-accent" />
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-card" />
+        <div>
+          <div className="font-semibold text-sm text-foreground">
+            {client.phone_number || client.name}
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="font-semibold text-sm text-foreground truncate">
-              {client.phone_number || client.name}
-            </div>
-            <div className="text-xs text-muted-foreground mt-0.5">
-              Joined {formatDate(client.created_at)}
-            </div>
+          <div className="text-xs text-muted-foreground mt-0.5">
+            Joined {formatDate(client.created_at)}
           </div>
         </div>
       </TableCell>
