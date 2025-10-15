@@ -10,21 +10,21 @@ interface ClientsTableProps {
 
 export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) {
   return (
-    <div className="rounded-lg border border-border/50 overflow-hidden shadow-google">
+    <div className="rounded-xl border border-border/40 overflow-hidden bg-card shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/50">
-            <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide">
-              Client
+          <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/30">
+            <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              CLIENT
             </TableHead>
-            <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide">
-              Details
+            <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              FINANCIAL SUMMARY
             </TableHead>
-            <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide">
-              Status
+            <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              STATUS
             </TableHead>
-            <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide">
-              Action
+            <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11 text-right">
+              ACTIONS
             </TableHead>
           </TableRow>
         </TableHeader>

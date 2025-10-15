@@ -50,14 +50,14 @@ export default function Clients() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Clients</h1>
-          <p className="text-muted-foreground mt-2">Manage your customer relationships and accounts</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Clients</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage your customer relationships and accounts</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2">
-          <Plus className="h-5 w-5" />
+        <Button onClick={() => setDialogOpen(true)} size="default" className="gap-2 shadow-sm">
+          <Plus className="h-4 w-4" />
           Add Client
         </Button>
       </div>

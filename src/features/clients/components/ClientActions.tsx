@@ -38,28 +38,31 @@ export function ClientActions({ client, onEdit, onRefresh }: ClientActionsProps)
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="border-accent/50 text-accent hover:bg-accent/10">
-            <MoreVertical className="h-4 w-4 mr-1" />
-            Action
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="h-8 w-8 p-0 opacity-60 group-hover:opacity-100 transition-opacity hover:bg-accent/10"
+          >
+            <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-popover z-50">
+        <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
           <DropdownMenuItem
-            className="text-accent cursor-pointer"
+            className="text-accent cursor-pointer hover:bg-accent/5"
             onClick={() => setTopUpDialogOpen(true)}
           >
             <ArrowUpCircle className="h-4 w-4 mr-2" />
             Top Up
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-success cursor-pointer"
+            className="text-success cursor-pointer hover:bg-success/5"
             onClick={() => setSalesDialogOpen(true)}
           >
             <Receipt className="h-4 w-4 mr-2" />
             View Sales
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-info cursor-pointer"
+            className="text-info cursor-pointer hover:bg-info/5"
             onClick={() => setTransactionsDialogOpen(true)}
           >
             <ArrowLeftRight className="h-4 w-4 mr-2" />
@@ -67,7 +70,7 @@ export function ClientActions({ client, onEdit, onRefresh }: ClientActionsProps)
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setDeleteDialogOpen(true)}
-            className="text-destructive cursor-pointer"
+            className="text-destructive cursor-pointer hover:bg-destructive/5"
           >
             <XCircle className="h-4 w-4 mr-2" />
             Drop Invoice Account
