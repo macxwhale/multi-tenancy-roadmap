@@ -91,12 +91,16 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
         const pin = generatePIN();
         
         // Create auth account for client
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: `${data.phone_number}@client.internal`,
-          password: pin,
+        const { data: fnData, error: fnError } = await supabase.functions.invoke('create-client-user', {
+          body: {
+            email: `${data.phone_number}@client.internal`,
+            password: pin,
+            metadata: { role: 'client', phone_number: data.phone_number },
+          },
         });
 
-        if (authError) throw authError;
+        if (fnError) throw fnError;
+        if ((fnData as any)?.error) throw new Error((fnData as any).error as string);
 
         // Create client record
         const { error: clientError } = await supabase.from("clients").insert({
