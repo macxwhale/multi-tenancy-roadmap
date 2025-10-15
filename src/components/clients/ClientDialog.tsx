@@ -63,7 +63,11 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
   }, [client, form]);
 
   const generatePIN = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    // Use cryptographically secure random number generation
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const pin = (array[0] % 900000) + 100000;
+    return pin.toString();
   };
 
   const onSubmit = async (data: ClientFormData) => {
@@ -93,12 +97,9 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
           name: data.phone_number, // Use phone as name for now
         });
 
-        toast.success("Client created successfully! PIN has been generated and logged securely.", {
+        toast.success("Client created successfully! PIN has been securely generated.", {
           duration: 5000,
         });
-        
-        // Log PIN securely on server side only (for admin to retrieve through secure channel)
-        console.log(`[ADMIN ONLY] Client PIN for ${data.phone_number}: ${pin}`);
       }
 
       onClose();
