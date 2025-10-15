@@ -122,7 +122,18 @@ serve(async (req) => {
   } catch (e) {
     const msg = e instanceof Error ? e.message : (typeof e === 'string' ? e : 'Unknown error');
     console.error("Unexpected error:", msg);
-    return new Response(JSON.stringify({ error: msg }), {
+    
+    // Sanitize error message for client
+    let clientMessage = 'Failed to create client user';
+    if (e instanceof Error) {
+      if (e.message.includes('duplicate') || e.message.includes('already exists')) {
+        clientMessage = 'User already exists';
+      } else if (e.message.includes('foreign key') || e.message.includes('Invalid')) {
+        clientMessage = 'Invalid data provided';
+      }
+    }
+    
+    return new Response(JSON.stringify({ error: clientMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

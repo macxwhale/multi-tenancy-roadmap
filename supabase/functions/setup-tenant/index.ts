@@ -132,9 +132,19 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in setup-tenant:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    
+    // Sanitize error message for client
+    let clientMessage = 'Failed to setup tenant';
+    if (error instanceof Error) {
+      if (error.message.includes('duplicate') || error.message.includes('already exists')) {
+        clientMessage = 'This phone number is already registered';
+      } else if (error.message.includes('foreign key') || error.message.includes('violates')) {
+        clientMessage = 'Invalid data provided';
+      }
+    }
+    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: clientMessage }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
     );
   }

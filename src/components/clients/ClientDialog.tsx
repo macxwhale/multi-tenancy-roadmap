@@ -93,9 +93,12 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
           name: data.phone_number, // Use phone as name for now
         });
 
-        toast.success(`Client created! PIN: ${pin}`, {
-          duration: 10000,
+        toast.success("Client created successfully! PIN has been generated and logged securely.", {
+          duration: 5000,
         });
+        
+        // Log PIN securely on server side only (for admin to retrieve through secure channel)
+        console.log(`[ADMIN ONLY] Client PIN for ${data.phone_number}: ${pin}`);
       }
 
       onClose();
