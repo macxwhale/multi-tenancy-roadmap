@@ -13,6 +13,7 @@ import { ClientTransactionsDialog } from "@/components/clients/ClientTransaction
 import { DeleteConfirmDialog } from "@/shared/components/DeleteConfirmDialog";
 import { useDeleteClient } from "@/hooks/useClients";
 import type { ClientWithDetails } from "@/api/clients.api";
+import { toast } from "@/hooks/use-toast";
 
 interface ClientActionsProps {
   client: ClientWithDetails;
@@ -27,6 +28,17 @@ export function ClientActions({ client, onEdit, onRefresh }: ClientActionsProps)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const deleteClient = useDeleteClient();
+
+  const handleTopUp = () => {
+    if (client.totalInvoiced === 0) {
+      toast({
+        title: "No Invoice Value",
+        description: "This client has 0 invoice value.",
+        variant: "destructive",
+      });
+    }
+    setTopUpDialogOpen(true);
+  };
 
   const handleDelete = async () => {
     await deleteClient.mutateAsync(client.id);
@@ -49,7 +61,7 @@ export function ClientActions({ client, onEdit, onRefresh }: ClientActionsProps)
         <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
           <DropdownMenuItem
             className="text-accent cursor-pointer hover:bg-accent/5"
-            onClick={() => setTopUpDialogOpen(true)}
+            onClick={handleTopUp}
           >
             <ArrowUpCircle className="h-4 w-4 mr-2" />
             Top Up
