@@ -2,6 +2,15 @@
 // Uses service role to call Admin API safely on the server
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+
+const createClientSchema = z.object({
+  email: z.string().email('Invalid email format').max(255, 'Email too long'),
+  password: z.string().min(6, 'Password must be at least 6 characters').max(255, 'Password too long'),
+  phoneNumber: z.string().regex(/^0\d{9}$/, 'Phone number must be 10 digits starting with 0'),
+  tenantId: z.string().uuid('Invalid tenant ID'),
+  metadata: z.record(z.any()).optional(),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,16 +28,23 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password, metadata, tenantId, phoneNumber } = await req.json();
-    console.log("Creating client user with phone:", phoneNumber);
+    const body = await req.json();
     
-    if (!email || !password || !tenantId || !phoneNumber) {
-      console.error("Missing required fields:", { email: !!email, password: !!password, tenantId: !!tenantId, phoneNumber: !!phoneNumber });
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+    // Validate input
+    const validationResult = createClientSchema.safeParse(body);
+    if (!validationResult.success) {
+      console.error("Validation failed:", validationResult.error.issues);
+      return new Response(JSON.stringify({ 
+        error: "Invalid input data", 
+        details: validationResult.error.issues 
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
     }
+
+    const { email, password, metadata, tenantId, phoneNumber } = validationResult.data;
+    console.log("Creating client user with phone:", phoneNumber);
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,

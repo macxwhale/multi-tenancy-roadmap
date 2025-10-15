@@ -1,4 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+
+const setupTenantSchema = z.object({
+  business_name: z.string().trim().min(1, 'Business name is required').max(255, 'Business name too long'),
+  full_name: z.string().trim().min(1, 'Full name is required').max(255, 'Full name too long'),
+  phone_number: z.string().regex(/^0\d{9}$/, 'Phone number must be 10 digits starting with 0'),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,7 +38,18 @@ Deno.serve(async (req) => {
       throw new Error('Invalid user token');
     }
 
-    const { business_name, full_name, phone_number } = await req.json();
+    const body = await req.json();
+    
+    // Validate input
+    const validationResult = setupTenantSchema.safeParse(body);
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input data', details: validationResult.error.issues }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    const { business_name, full_name, phone_number } = validationResult.data;
 
     console.log('Setting up tenant for user:', user.id);
 
