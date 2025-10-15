@@ -59,7 +59,7 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
   }, [client, form]);
 
   const generatePIN = () => {
-    return Math.floor(1000 + Math.random() * 9000).toString();
+    return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
   const onSubmit = async (data: ClientFormData) => {
