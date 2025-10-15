@@ -8,128 +8,150 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Google-inspired colors - Clean, soft, professional */
-    --background: 0 0% 99%;
-    --foreground: 220 9% 20%;
+    /* Modern Dashboard Colors - Sophisticated and Professional */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 9% 20%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 9% 20%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Primary: Google Blue - Professional and trustworthy */
-    --primary: 217 89% 61%;
+    /* Primary: Rich Blue - Modern and Engaging */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 217 89% 55%;
+    --primary-hover: 221 83% 48%;
+    --primary-light: 221 83% 95%;
     
-    /* Secondary: Soft gray - Clean and minimal */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 20%;
+    /* Secondary: Sophisticated Purple */
+    --secondary: 262 52% 47%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 262 52% 95%;
 
-    /* Muted: Very subtle gray */
-    --muted: 220 13% 96%;
+    /* Muted: Refined Grays */
+    --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
 
-    /* Accent: Google Blue accent */
-    --accent: 217 89% 61%;
+    /* Accent: Vibrant for CTAs */
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
 
-    /* Destructive: Google Red */
-    --destructive: 4 90% 58%;
+    /* Destructive: Clear Warning Red */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success: Google Green */
-    --success: 142 76% 36%;
+    /* Success: Fresh Green */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
+    --success-light: 142 71% 95%;
 
-    /* Warning: Google Yellow */
-    --warning: 45 100% 51%;
-    --warning-foreground: 220 9% 20%;
+    /* Warning: Warm Amber */
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+    --warning-light: 38 92% 95%;
 
-    /* Info: Google Blue */
-    --info: 217 89% 61%;
+    /* Info: Bright Cyan */
+    --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
+    --info-light: 199 89% 95%;
 
-    /* Borders and inputs - Very subtle */
+    /* Borders and inputs - Refined */
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 89% 61%;
+    --ring: 221 83% 53%;
 
-    /* Border radius - Google's softer approach */
-    --radius: 0.5rem;
+    /* Border radius - Modern approach */
+    --radius: 0.75rem;
 
-    /* Sidebar - Clean white with subtle borders */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 9% 20%;
-    --sidebar-primary: 217 89% 61%;
+    /* Sidebar - Modern with depth */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 220 9% 20%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 89% 61%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 221 83% 53%;
 
-    /* Elevation - Google Material shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Enhanced Elevation System */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-2xl: 0 35px 60px -15px rgb(0 0 0 / 0.3);
 
-    /* Transitions - Smooth Google-style */
+    /* Transitions - Refined timing */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Spacing scale - 4px base */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
   }
 
   .dark {
-    /* Dark mode - Google's sophisticated dark palette */
-    --background: 220 13% 9%;
-    --foreground: 220 9% 98%;
+    /* Dark mode - Rich and Modern */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 220 13% 11%;
-    --card-foreground: 220 9% 98%;
+    --card: 217 32% 17%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 220 13% 11%;
-    --popover-foreground: 220 9% 98%;
+    --popover: 217 32% 17%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 67%;
-    --primary-foreground: 220 13% 9%;
-    --primary-hover: 217 91% 73%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 221 83% 58%;
+    --primary-light: 221 83% 25%;
 
-    --secondary: 220 13% 16%;
-    --secondary-foreground: 220 9% 98%;
+    --secondary: 262 52% 47%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 262 52% 25%;
 
-    --muted: 220 13% 16%;
-    --muted-foreground: 220 9% 65%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217 91% 67%;
-    --accent-foreground: 220 13% 9%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 4 90% 58%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
+    --success-light: 142 71% 25%;
 
-    --warning: 45 100% 51%;
-    --warning-foreground: 220 13% 9%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+    --warning-light: 38 92% 25%;
 
-    --info: 217 91% 67%;
-    --info-foreground: 220 13% 9%;
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 199 89% 25%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 20%;
-    --ring: 217 91% 67%;
+    --border: 217 32% 23%;
+    --input: 217 32% 23%;
+    --ring: 221 83% 53%;
 
-    --sidebar-background: 220 13% 11%;
-    --sidebar-foreground: 220 9% 98%;
-    --sidebar-primary: 217 91% 67%;
-    --sidebar-primary-foreground: 220 13% 9%;
-    --sidebar-accent: 220 13% 16%;
-    --sidebar-accent-foreground: 220 9% 98%;
-    --sidebar-border: 220 13% 20%;
-    --sidebar-ring: 217 91% 67%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 23%;
+    --sidebar-ring: 221 83% 53%;
   }
 }
 
@@ -140,7 +162,35 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Typography scale */
+  h1 {
+    @apply text-4xl font-bold tracking-tight;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  
+  h3 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  
+  h4 {
+    @apply text-xl font-semibold;
+  }
+  
+  h5 {
+    @apply text-lg font-semibold;
+  }
+  
+  h6 {
+    @apply text-base font-semibold;
   }
   
   /* Smooth scrolling */
@@ -148,7 +198,7 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
   
-  /* Google-style focus states */
+  /* Modern focus states */
   *:focus-visible {
     @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
   }
@@ -165,7 +215,11 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Google Material elevation shadows */
+  /* Enhanced elevation shadows */
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
+  
   .shadow-google-sm {
     box-shadow: var(--shadow-sm);
   }
@@ -186,21 +240,94 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-xl);
   }
 
-  /* Smooth hover lift effect */
+  .shadow-google-2xl {
+    box-shadow: var(--shadow-2xl);
+  }
+
+  /* Modern hover effects */
   .hover-lift {
-    @apply transition-all duration-200;
+    @apply transition-all;
+    transition-duration: var(--transition-base);
   }
   
   .hover-lift:hover {
-    @apply -translate-y-0.5 shadow-google-md;
+    @apply -translate-y-1 shadow-google-lg;
   }
 
-  /* Glass morphism for modern feel */
+  .hover-scale {
+    @apply transition-transform;
+    transition-duration: var(--transition-base);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  /* Glass morphism */
   .glass {
     @apply bg-white/80 backdrop-blur-md;
   }
 
   .dark .glass {
     @apply bg-card/80;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(142 71% 60%) 100%);
+  }
+
+  .gradient-warning {
+    background: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(38 92% 65%) 100%);
+  }
+
+  .gradient-info {
+    background: linear-gradient(135deg, hsl(var(--info)) 0%, hsl(199 89% 63%) 100%);
+  }
+
+  /* Text gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+  }
+
+  /* Animation utilities */
+  .animate-in {
+    animation: fadeIn var(--transition-base) ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-scale-in {
+    animation: scaleIn var(--transition-base) ease-out;
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Press effect for buttons */
+  .active-press:active {
+    transform: scale(0.98);
   }
 }
