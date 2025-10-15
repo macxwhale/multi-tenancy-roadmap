@@ -31,7 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { ClientTopUpDialog } from "./ClientTopUpDialog";
 import { ClientSalesDialog } from "./ClientSalesDialog";
 import { ClientTransactionsDialog } from "./ClientTransactionsDialog";
-import type { ClientWithDetails } from "@/pages/Clients";
+import type { ClientWithDetails } from "@/api/clients.api";
 
 interface ClientsTableProps {
   clients: ClientWithDetails[];

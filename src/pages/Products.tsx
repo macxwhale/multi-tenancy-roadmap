@@ -1,40 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Package } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
 import { ProductsTable } from "@/components/products/ProductsTable";
 import { ProductDialog } from "@/components/products/ProductDialog";
+import { useProducts } from "@/hooks/useProducts";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products = [], isLoading: loading, refetch } = useProducts();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setProducts(data || []);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
@@ -44,7 +23,7 @@ export default function Products() {
   const handleDialogClose = () => {
     setDialogOpen(false);
     setEditingProduct(null);
-    fetchProducts();
+    refetch();
   };
 
   if (loading) {
@@ -85,7 +64,7 @@ export default function Products() {
           }}
         />
       ) : (
-        <ProductsTable products={products} onEdit={handleEdit} onRefresh={fetchProducts} />
+        <ProductsTable products={products} onEdit={handleEdit} onRefresh={() => refetch()} />
       )}
       <ProductDialog
         open={dialogOpen}

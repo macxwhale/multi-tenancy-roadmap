@@ -1,40 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
 import { InvoicesTable } from "@/components/invoices/InvoicesTable";
 import { InvoiceDialog } from "@/components/invoices/InvoiceDialog";
+import { useInvoices } from "@/hooks/useInvoices";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Invoice = Tables<"invoices">;
 
 export default function Invoices() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: invoices = [], isLoading: loading, refetch } = useInvoices();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
-
-  useEffect(() => {
-    fetchInvoices();
-  }, []);
-
-  const fetchInvoices = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("invoices")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setInvoices(data || []);
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEdit = (invoice: Invoice) => {
     setEditingInvoice(invoice);
@@ -44,7 +23,7 @@ export default function Invoices() {
   const handleDialogClose = () => {
     setDialogOpen(false);
     setEditingInvoice(null);
-    fetchInvoices();
+    refetch();
   };
 
   if (loading) {
@@ -85,7 +64,7 @@ export default function Invoices() {
           }}
         />
       ) : (
-        <InvoicesTable invoices={invoices} onEdit={handleEdit} onRefresh={fetchInvoices} />
+        <InvoicesTable invoices={invoices} onEdit={handleEdit} onRefresh={() => refetch()} />
       )}
       <InvoiceDialog
         open={dialogOpen}

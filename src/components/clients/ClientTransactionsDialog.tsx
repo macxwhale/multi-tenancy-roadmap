@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ClientWithDetails } from "@/pages/Clients";
+import type { ClientWithDetails } from "@/api/clients.api";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Transaction = Tables<"transactions">;

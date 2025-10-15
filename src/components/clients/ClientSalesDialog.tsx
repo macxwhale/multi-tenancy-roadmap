@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ClientWithDetails } from "@/pages/Clients";
+import type { ClientWithDetails } from "@/api/clients.api";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Invoice = Tables<"invoices">;

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ShoppingCart, DollarSign } from "lucide-react";
-import type { ClientWithDetails } from "@/pages/Clients";
+import type { ClientWithDetails } from "@/api/clients.api";
 
 interface AddSalesDialogProps {
   open: boolean;
