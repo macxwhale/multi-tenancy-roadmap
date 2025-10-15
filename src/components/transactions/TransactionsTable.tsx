@@ -47,38 +47,48 @@ export function TransactionsTable({
 
   return (
     <>
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-lg border border-border/50 overflow-hidden shadow-google">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="min-w-[100px]">Type</TableHead>
-              <TableHead className="min-w-[120px]">Amount</TableHead>
-              <TableHead className="min-w-[120px]">Date</TableHead>
-              <TableHead className="min-w-[200px]">Notes</TableHead>
-              <TableHead className="text-right min-w-[100px]">Actions</TableHead>
+            <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/50">
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[100px]">
+                Type
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[120px]">
+                Amount
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[120px]">
+                Date
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[200px]">
+                Notes
+              </TableHead>
+              <TableHead className="text-right text-foreground font-semibold text-xs uppercase tracking-wide min-w-[100px]">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-card">
             {transactions.map((transaction) => (
-              <TableRow key={transaction.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell>
+              <TableRow key={transaction.id} className="hover:bg-accent/5 transition-all duration-200 border-b border-border/50">
+                <TableCell className="py-5">
                   <Badge variant={transaction.type === "payment" ? "success" : "destructive"}>
                     {transaction.type}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-semibold">
+                <TableCell className="font-semibold py-5">
                   {formatCurrency(transaction.amount)}
                 </TableCell>
-                <TableCell>{formatDateShort(transaction.date)}</TableCell>
-                <TableCell className="text-muted-foreground">{transaction.notes || "-"}</TableCell>
-                <TableCell>
+                <TableCell className="py-5">{formatDateShort(transaction.date)}</TableCell>
+                <TableCell className="text-muted-foreground py-5">{transaction.notes || "-"}</TableCell>
+                <TableCell className="py-5">
                   <div className="flex justify-end gap-1">
                     <Button 
                       variant="ghost" 
                       size="icon" 
                       onClick={() => onEdit(transaction)}
                       title="Edit"
-                      className="h-9 w-9"
+                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -87,7 +97,7 @@ export function TransactionsTable({
                       size="icon"
                       onClick={() => handleDeleteClick(transaction)}
                       title="Delete"
-                      className="h-9 w-9 hover:text-destructive"
+                      className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash className="h-4 w-4" />
                     </Button>

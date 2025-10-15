@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -39,21 +40,23 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
-      <div className="p-4 border-b border-sidebar-border">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border shadow-google-sm">
+      <div className="p-6 border-b border-sidebar-border/50">
         {state === "expanded" && (
-          <div>
-            <h1 className="text-xl font-bold text-sidebar-primary">Nunua Polepole</h1>
-            <p className="text-xs text-sidebar-foreground/60 mt-1">Buy slowly, build trust</p>
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold text-sidebar-primary tracking-tight">Nunua Polepole</h1>
+            <p className="text-xs text-muted-foreground">Buy slowly, build trust</p>
           </div>
         )}
       </div>
 
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">
+            Menu
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
@@ -61,12 +64,15 @@ export function AppSidebar() {
                       to={item.url}
                       end
                       className={({ isActive }) =>
-                        isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          : "hover:bg-sidebar-accent/50"
+                        cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-google"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/80"
+                        )
                       }
                     >
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
                       {state === "expanded" && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -77,14 +83,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <div className="mt-auto p-4 border-t border-sidebar-border">
+      <div className="mt-auto p-3 border-t border-sidebar-border/50">
         <Button
           variant="ghost"
-          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          className="w-full justify-start text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-lg"
           onClick={handleLogout}
         >
-          <LogOut className="h-4 w-4" />
-          {state === "expanded" && <span className="ml-2">Log Out</span>}
+          <LogOut className="h-5 w-5" />
+          {state === "expanded" && <span className="ml-3">Log Out</span>}
         </Button>
       </div>
     </Sidebar>

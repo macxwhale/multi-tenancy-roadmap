@@ -28,15 +28,18 @@ export default function Clients() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8 animate-in fade-in duration-500">
         <div className="flex justify-between items-center">
-          <div className="h-9 w-32 bg-muted animate-pulse rounded" />
-          <div className="h-10 w-32 bg-muted animate-pulse rounded" />
+          <div className="space-y-2">
+            <div className="h-10 w-48 bg-muted animate-pulse rounded-lg" />
+            <div className="h-4 w-96 bg-muted animate-pulse rounded-lg" />
+          </div>
+          <div className="h-11 w-36 bg-muted animate-pulse rounded-lg" />
         </div>
-        <div className="border rounded-lg overflow-hidden">
-          <div className="bg-accent h-12 w-full" />
+        <div className="border border-border/50 rounded-lg overflow-hidden shadow-google">
+          <div className="bg-muted/30 h-14 w-full" />
           {[1, 2, 3].map((i) => (
-            <div key={i} className="border-t p-4 space-y-3">
+            <div key={i} className="border-t border-border/50 p-5 space-y-3">
               <div className="h-4 bg-muted animate-pulse rounded w-1/4" />
               <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
             </div>
@@ -47,11 +50,14 @@ export default function Clients() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Clients</h1>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Clients</h1>
+          <p className="text-muted-foreground mt-2">Manage your customer relationships and accounts</p>
+        </div>
+        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2">
+          <Plus className="h-5 w-5" />
           Add Client
         </Button>
       </div>

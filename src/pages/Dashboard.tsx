@@ -46,60 +46,79 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        <Skeleton className="h-9 w-40" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <Skeleton className="h-10 w-48" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-36 w-full rounded-lg" />
+          <Skeleton className="h-36 w-full rounded-lg" />
+          <Skeleton className="h-36 w-full rounded-lg" />
+          <Skeleton className="h-36 w-full rounded-lg" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-lg transition-shadow duration-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-2">Welcome back! Here's an overview of your business.</p>
+      </div>
+      
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-primary/5 to-transparent">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Clients</CardTitle>
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalClients}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active customer base</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold tracking-tight">{stats.totalClients}</div>
+            <p className="text-sm text-muted-foreground mt-2">Active customer base</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow duration-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+
+        <Card className="overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-info/5 to-transparent">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Invoices</CardTitle>
+            <div className="p-2 bg-info/10 rounded-lg">
+              <FileText className="h-5 w-5 text-info" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalInvoices}</div>
-            <p className="text-xs text-muted-foreground mt-1">Invoices generated</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</div>
+            <p className="text-sm text-muted-foreground mt-2">Invoices generated</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow duration-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Amount</CardTitle>
-            <DollarSign className="h-4 w-4 text-warning" />
+
+        <Card className="overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-warning/5 to-transparent">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Pending Amount</CardTitle>
+            <div className="p-2 bg-warning/10 rounded-lg">
+              <DollarSign className="h-5 w-5 text-warning" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">KSH {stats.pendingAmount.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Outstanding payments</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold tracking-tight text-warning">
+              KSH {stats.pendingAmount.toLocaleString()}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Outstanding payments</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow duration-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <TrendingUp className="h-4 w-4 text-success" />
+
+        <Card className="overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-success/5 to-transparent">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Revenue</CardTitle>
+            <div className="p-2 bg-success/10 rounded-lg">
+              <TrendingUp className="h-5 w-5 text-success" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-success">KSH {stats.totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total income received</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold tracking-tight text-success">
+              KSH {stats.totalRevenue.toLocaleString()}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">Total income received</p>
           </CardContent>
         </Card>
       </div>

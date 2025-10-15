@@ -124,23 +124,33 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
 
   return (
     <>
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-lg border border-border/50 overflow-hidden shadow-google">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="min-w-[120px]">Invoice #</TableHead>
-              <TableHead className="min-w-[120px]">Amount</TableHead>
-              <TableHead className="min-w-[100px]">Status</TableHead>
-              <TableHead className="min-w-[120px]">Date</TableHead>
-              <TableHead className="text-right min-w-[200px]">Actions</TableHead>
+            <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/50">
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[120px]">
+                Invoice #
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[120px]">
+                Amount
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[100px]">
+                Status
+              </TableHead>
+              <TableHead className="text-foreground font-semibold text-xs uppercase tracking-wide min-w-[120px]">
+                Date
+              </TableHead>
+              <TableHead className="text-right text-foreground font-semibold text-xs uppercase tracking-wide min-w-[200px]">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-card">
             {invoices.map((invoice) => (
-              <TableRow key={invoice.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                <TableCell className="font-semibold">{formatCurrency(invoice.amount)}</TableCell>
-                <TableCell>
+              <TableRow key={invoice.id} className="hover:bg-accent/5 transition-all duration-200 border-b border-border/50">
+                <TableCell className="font-medium py-5">{invoice.invoice_number}</TableCell>
+                <TableCell className="font-semibold py-5">{formatCurrency(invoice.amount)}</TableCell>
+                <TableCell className="py-5">
                   <Badge
                     variant={
                       invoice.status === "paid"
@@ -153,15 +163,15 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                     {invoice.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{formatDateShort(invoice.created_at)}</TableCell>
-                <TableCell>
+                <TableCell className="py-5">{formatDateShort(invoice.created_at)}</TableCell>
+                <TableCell className="py-5">
                   <div className="flex justify-end gap-1">
                     <Button 
                       variant="ghost" 
                       size="icon" 
                       onClick={() => handleDownloadPDF(invoice)} 
                       title="Download PDF"
-                      className="h-9 w-9"
+                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
@@ -170,7 +180,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                       size="icon" 
                       onClick={() => handlePrintPDF(invoice)} 
                       title="Print"
-                      className="h-9 w-9"
+                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
                     >
                       <Printer className="h-4 w-4" />
                     </Button>
@@ -179,7 +189,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                       size="icon" 
                       onClick={() => handleSendWhatsApp(invoice)} 
                       title="Send via WhatsApp"
-                      className="h-9 w-9"
+                      className="h-9 w-9 hover:bg-success/10 hover:text-success"
                     >
                       <MessageSquare className="h-4 w-4" />
                     </Button>
@@ -188,7 +198,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                       size="icon" 
                       onClick={() => onEdit(invoice)}
                       title="Edit"
-                      className="h-9 w-9"
+                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -197,7 +207,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                       size="icon"
                       onClick={() => handleDeleteClick(invoice)}
                       title="Delete"
-                      className="h-9 w-9 hover:text-destructive"
+                      className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash className="h-4 w-4" />
                     </Button>

@@ -28,27 +28,33 @@ export default function Invoices() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="space-y-8 animate-in fade-in duration-500">
         <div className="flex justify-between items-center">
-          <Skeleton className="h-9 w-32" />
-          <Skeleton className="h-10 w-40" />
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-96 rounded-lg" />
+          </div>
+          <Skeleton className="h-11 w-40 rounded-lg" />
         </div>
-        <div className="space-y-2">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-16 w-full" />
+        <div className="border border-border/50 rounded-lg overflow-hidden shadow-google">
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-20 w-full mt-2" />
+          <Skeleton className="h-20 w-full mt-2" />
+          <Skeleton className="h-20 w-full mt-2" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="animate-in fade-in duration-500">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold">Invoices</h1>
-        <Button onClick={() => setDialogOpen(true)} className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Invoices</h1>
+          <p className="text-muted-foreground mt-2">Create and manage customer invoices</p>
+        </div>
+        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto">
+          <Plus className="h-5 w-5" />
           Create Invoice
         </Button>
       </div>
