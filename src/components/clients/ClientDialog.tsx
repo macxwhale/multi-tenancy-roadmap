@@ -24,13 +24,10 @@ import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 
 const clientSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
   phone_number: z
     .string()
     .regex(/^07\d{8}$/, "Phone must be 10 digits starting with 07")
-    .optional()
-    .or(z.literal("")),
+    .min(1, "Phone number is required"),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -45,8 +42,6 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: "",
-      email: "",
       phone_number: "",
     },
   });
@@ -54,18 +49,18 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
   useEffect(() => {
     if (client) {
       form.reset({
-        name: client.name,
-        email: client.email || "",
         phone_number: client.phone_number || "",
       });
     } else {
       form.reset({
-        name: "",
-        email: "",
         phone_number: "",
       });
     }
   }, [client, form]);
+
+  const generatePIN = () => {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+  };
 
   const onSubmit = async (data: ClientFormData) => {
     try {
@@ -80,24 +75,41 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
 
       if (!profile) throw new Error("Profile not found");
 
-      const clientData = {
-        name: data.name,
-        email: data.email || null,
-        phone_number: data.phone_number || null,
-        tenant_id: profile.tenant_id,
-      };
-
       if (client) {
+        // Update existing client
         const { error } = await supabase
           .from("clients")
-          .update(clientData)
+          .update({
+            phone_number: data.phone_number,
+            tenant_id: profile.tenant_id,
+          })
           .eq("id", client.id);
         if (error) throw error;
         toast.success("Client updated successfully");
       } else {
-        const { error } = await supabase.from("clients").insert(clientData);
-        if (error) throw error;
-        toast.success("Client created successfully");
+        // Create new client with PIN
+        const pin = generatePIN();
+        
+        // Create auth account for client
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: `${data.phone_number}@client.internal`,
+          password: pin,
+        });
+
+        if (authError) throw authError;
+
+        // Create client record
+        const { error: clientError } = await supabase.from("clients").insert({
+          phone_number: data.phone_number,
+          name: data.phone_number, // Use phone as name for now
+          tenant_id: profile.tenant_id,
+        });
+
+        if (clientError) throw clientError;
+
+        toast.success(`Client created! PIN: ${pin}`, {
+          duration: 10000,
+        });
       }
 
       onClose();
@@ -120,36 +132,10 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Client Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter client name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email (Optional)</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="client@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="phone_number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number (Optional)</FormLabel>
+                  <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <Input placeholder="0712345678" {...field} />
                   </FormControl>
