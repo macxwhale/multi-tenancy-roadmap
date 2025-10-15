@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,9 +26,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
+import { useClients } from "@/hooks/useClients";
+import { useCreateInvoice, useUpdateInvoice, useGenerateInvoiceNumber } from "@/hooks/useInvoices";
 
 const invoiceSchema = z.object({
   client_id: z.string().min(1, "Client is required"),
@@ -46,7 +47,10 @@ interface InvoiceDialogProps {
 }
 
 export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
-  const [clients, setClients] = useState<Tables<"clients">[]>([]);
+  const { data: clients = [] } = useClients();
+  const { data: nextInvoiceNumber } = useGenerateInvoiceNumber();
+  const createInvoice = useCreateInvoice();
+  const updateInvoice = useUpdateInvoice();
 
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceSchema),
@@ -57,10 +61,6 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
       notes: "",
     },
   });
-
-  useEffect(() => {
-    fetchClients();
-  }, []);
 
   useEffect(() => {
     if (invoice) {
@@ -80,52 +80,37 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
     }
   }, [invoice, form]);
 
-  const fetchClients = async () => {
-    const { data } = await supabase.from("clients").select("*").eq("status", "active");
-    setClients(data || []);
-  };
-
   const onSubmit = async (data: InvoiceFormData) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tenant_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!profile) throw new Error("Profile not found");
-
       const invoiceData = {
         client_id: data.client_id,
         amount: parseFloat(data.amount),
         status: data.status,
         notes: data.notes || null,
-        tenant_id: profile.tenant_id,
-        invoice_number: invoice?.invoice_number || `INV-${Date.now()}`,
+        invoice_number: invoice?.invoice_number || nextInvoiceNumber || `INV-${Date.now()}`,
       };
 
       if (invoice) {
-        const { error } = await supabase
-          .from("invoices")
-          .update(invoiceData)
-          .eq("id", invoice.id);
-        if (error) throw error;
+        await updateInvoice.mutateAsync({
+          id: invoice.id,
+          updates: invoiceData,
+        });
         toast.success("Invoice updated successfully");
       } else {
-        const { error } = await supabase.from("invoices").insert(invoiceData);
-        if (error) throw error;
+        await createInvoice.mutateAsync(invoiceData);
         toast.success("Invoice created successfully");
       }
 
       onClose();
     } catch (error) {
       console.error("Error saving invoice:", error);
-      toast.error("Failed to save invoice");
+      const errorMessage = error instanceof Error ? error.message : "Failed to save invoice";
+      toast.error(errorMessage);
     }
   };
+
+  // Filter active clients
+  const activeClients = clients.filter(c => c.status === 'active');
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -148,7 +133,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {clients.map((client) => (
+                      {activeClients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}
                         </SelectItem>

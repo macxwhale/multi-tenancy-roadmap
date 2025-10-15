@@ -170,3 +170,28 @@ export const updateClientBalance = async (
 
   if (updateError) throw updateError;
 };
+
+/**
+ * Create a client user account via edge function
+ */
+export const createClientUser = async (
+  phoneNumber: string,
+  pin: string
+): Promise<{ userId: string; email: string }> => {
+  const tenantId = await getCurrentTenantId();
+
+  const { data, error } = await supabase.functions.invoke('create-client-user', {
+    body: {
+      email: `${phoneNumber}@client.internal`,
+      password: pin,
+      metadata: { role: 'client', phone_number: phoneNumber },
+      tenantId,
+      phoneNumber,
+    },
+  });
+
+  if (error) throw error;
+  if ((data as any)?.error) throw new Error((data as any).error as string);
+  
+  return data;
+};

@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
+import { useCreateClient, useUpdateClient, useCreateClientUser } from "@/hooks/useClients";
 
 const clientSchema = z.object({
   phone_number: z
@@ -39,6 +39,10 @@ interface ClientDialogProps {
 }
 
 export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
+  const createClient = useCreateClient();
+  const updateClient = useUpdateClient();
+  const createClientUser = useCreateClientUser();
+
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
@@ -64,54 +68,30 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
 
   const onSubmit = async (data: ClientFormData) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tenant_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!profile) throw new Error("Profile not found");
-
       if (client) {
         // Update existing client
-        const { error } = await supabase
-          .from("clients")
-          .update({
+        await updateClient.mutateAsync({
+          id: client.id,
+          updates: {
             phone_number: data.phone_number,
-            tenant_id: profile.tenant_id,
-          })
-          .eq("id", client.id);
-        if (error) throw error;
+          },
+        });
         toast.success("Client updated successfully");
       } else {
         // Create new client with PIN
         const pin = generatePIN();
         
         // Create auth account for client
-        const { data: fnData, error: fnError } = await supabase.functions.invoke('create-client-user', {
-          body: {
-            email: `${data.phone_number}@client.internal`,
-            password: pin,
-            metadata: { role: 'client', phone_number: data.phone_number },
-            tenantId: profile.tenant_id,
-            phoneNumber: data.phone_number,
-          },
+        await createClientUser.mutateAsync({
+          phoneNumber: data.phone_number,
+          pin,
         });
-
-        if (fnError) throw fnError;
-        if ((fnData as any)?.error) throw new Error((fnData as any).error as string);
 
         // Create client record
-        const { error: clientError } = await supabase.from("clients").insert({
+        await createClient.mutateAsync({
           phone_number: data.phone_number,
           name: data.phone_number, // Use phone as name for now
-          tenant_id: profile.tenant_id,
         });
-
-        if (clientError) throw clientError;
 
         toast.success(`Client created! PIN: ${pin}`, {
           duration: 10000,
@@ -119,7 +99,7 @@ export function ClientDialog({ open, onClose, client }: ClientDialogProps) {
       }
 
       onClose();
-      } catch (error) {
+    } catch (error) {
       console.error("Error saving client:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to save client";
       toast.error(errorMessage);

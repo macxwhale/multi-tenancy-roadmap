@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,9 +26,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
+import { useClients } from "@/hooks/useClients";
+import { useCreateTransaction, useUpdateTransaction } from "@/hooks/useTransactions";
 
 const transactionSchema = z.object({
   client_id: z.string().min(1, "Client is required"),
@@ -47,7 +48,9 @@ interface TransactionDialogProps {
 }
 
 export function TransactionDialog({ open, onClose, transaction }: TransactionDialogProps) {
-  const [clients, setClients] = useState<Tables<"clients">[]>([]);
+  const { data: clients = [] } = useClients();
+  const createTransaction = useCreateTransaction();
+  const updateTransaction = useUpdateTransaction();
 
   const form = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
@@ -59,10 +62,6 @@ export function TransactionDialog({ open, onClose, transaction }: TransactionDia
       notes: "",
     },
   });
-
-  useEffect(() => {
-    fetchClients();
-  }, []);
 
   useEffect(() => {
     if (transaction) {
@@ -84,52 +83,37 @@ export function TransactionDialog({ open, onClose, transaction }: TransactionDia
     }
   }, [transaction, form]);
 
-  const fetchClients = async () => {
-    const { data } = await supabase.from("clients").select("*").eq("status", "active");
-    setClients(data || []);
-  };
-
   const onSubmit = async (data: TransactionFormData) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tenant_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!profile) throw new Error("Profile not found");
-
       const transactionData = {
         client_id: data.client_id,
         type: data.type,
         amount: parseFloat(data.amount),
         date: new Date(data.date).toISOString(),
         notes: data.notes || null,
-        tenant_id: profile.tenant_id,
       };
 
       if (transaction) {
-        const { error } = await supabase
-          .from("transactions")
-          .update(transactionData)
-          .eq("id", transaction.id);
-        if (error) throw error;
+        await updateTransaction.mutateAsync({
+          id: transaction.id,
+          updates: transactionData,
+        });
         toast.success("Transaction updated successfully");
       } else {
-        const { error } = await supabase.from("transactions").insert(transactionData);
-        if (error) throw error;
+        await createTransaction.mutateAsync(transactionData);
         toast.success("Transaction created successfully");
       }
 
       onClose();
     } catch (error) {
       console.error("Error saving transaction:", error);
-      toast.error("Failed to save transaction");
+      const errorMessage = error instanceof Error ? error.message : "Failed to save transaction";
+      toast.error(errorMessage);
     }
   };
+
+  // Filter active clients
+  const activeClients = clients.filter(c => c.status === 'active');
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -154,7 +138,7 @@ export function TransactionDialog({ open, onClose, transaction }: TransactionDia
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {clients.map((client) => (
+                      {activeClients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}
                         </SelectItem>

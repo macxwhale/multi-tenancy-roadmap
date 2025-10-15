@@ -125,3 +125,13 @@ export const useUpdateClientBalance = () => {
     },
   });
 };
+
+/**
+ * Create a client user account
+ */
+export const useCreateClientUser = () => {
+  return useMutation({
+    mutationFn: ({ phoneNumber, pin }: { phoneNumber: string; pin: string }) =>
+      clientsApi.createClientUser(phoneNumber, pin),
+  });
+};
