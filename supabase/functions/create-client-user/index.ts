@@ -62,7 +62,14 @@ serve(async (req) => {
 
     if (error) {
       console.error("Auth user creation failed:", error);
-      return new Response(JSON.stringify({ error: error.message }), {
+      
+      // Sanitize error message for client
+      let clientMessage = 'Failed to create client user';
+      if (error.message?.includes('already been registered') || error.message?.includes('already exists')) {
+        clientMessage = 'A client with this phone number already exists';
+      }
+      
+      return new Response(JSON.stringify({ error: clientMessage }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
@@ -85,7 +92,13 @@ serve(async (req) => {
       console.error("Profile creation failed:", profileError);
       // Rollback: delete the auth user if profile creation fails
       await supabaseAdmin.auth.admin.deleteUser(data.user!.id);
-      return new Response(JSON.stringify({ error: profileError.message }), {
+      
+      let clientMessage = 'Failed to create client profile';
+      if (profileError.message?.includes('duplicate') || profileError.message?.includes('already exists')) {
+        clientMessage = 'Client profile already exists';
+      }
+      
+      return new Response(JSON.stringify({ error: clientMessage }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
@@ -107,7 +120,13 @@ serve(async (req) => {
       // Rollback: delete profile and auth user
       await supabaseAdmin.from("profiles").delete().eq("user_id", data.user!.id);
       await supabaseAdmin.auth.admin.deleteUser(data.user!.id);
-      return new Response(JSON.stringify({ error: roleError.message }), {
+      
+      let clientMessage = 'Failed to assign client role';
+      if (roleError.message?.includes('duplicate') || roleError.message?.includes('already exists')) {
+        clientMessage = 'Client role already assigned';
+      }
+      
+      return new Response(JSON.stringify({ error: clientMessage }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
