@@ -2,18 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmDialog } from "@/shared/components/DeleteConfirmDialog";
+import { useDeleteTransaction } from "@/hooks/useTransactions";
+import { formatCurrency, formatDateShort } from "@/shared/utils";
 import {
   Table,
   TableBody,
@@ -38,28 +29,20 @@ export function TransactionsTable({
   onRefresh,
 }: TransactionsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+  const deleteTransaction = useDeleteTransaction();
 
-  const handleDeleteClick = (id: string) => {
-    setTransactionToDelete(id);
+  const handleDeleteClick = (transaction: Transaction) => {
+    setTransactionToDelete(transaction);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (!transactionToDelete) return;
-
-    try {
-      const { error } = await supabase.from("transactions").delete().eq("id", transactionToDelete);
-      if (error) throw error;
-      toast.success("Transaction deleted successfully");
-      onRefresh();
-    } catch (error) {
-      console.error("Error deleting transaction:", error);
-      toast.error("Failed to delete transaction");
-    } finally {
-      setDeleteDialogOpen(false);
-      setTransactionToDelete(null);
-    }
+    await deleteTransaction.mutateAsync(transactionToDelete.id);
+    setDeleteDialogOpen(false);
+    setTransactionToDelete(null);
+    onRefresh();
   };
 
   return (
@@ -84,9 +67,9 @@ export function TransactionsTable({
                   </Badge>
                 </TableCell>
                 <TableCell className="font-semibold">
-                  KSH {Number(transaction.amount).toLocaleString()}
+                  {formatCurrency(transaction.amount)}
                 </TableCell>
-                <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                <TableCell>{formatDateShort(transaction.date)}</TableCell>
                 <TableCell className="text-muted-foreground">{transaction.notes || "-"}</TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
@@ -102,7 +85,7 @@ export function TransactionsTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteClick(transaction.id)}
+                      onClick={() => handleDeleteClick(transaction)}
                       title="Delete"
                       className="h-9 w-9 hover:text-destructive"
                     >
@@ -116,22 +99,14 @@ export function TransactionsTable({
         </Table>
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this transaction? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Transaction"
+        description="Are you sure you want to delete this transaction? This action cannot be undone."
+        isLoading={deleteTransaction.isPending}
+      />
     </>
   );
 }

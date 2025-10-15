@@ -6,16 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { downloadInvoicePDF, printInvoicePDF } from "@/lib/pdfGenerator";
 import { sendWhatsAppInvoice } from "@/lib/whatsapp";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmDialog } from "@/shared/components/DeleteConfirmDialog";
+import { useDeleteInvoice } from "@/hooks/useInvoices";
+import { formatCurrency, formatDateShort } from "@/shared/utils";
 import {
   Table,
   TableBody,
@@ -36,7 +29,8 @@ interface InvoicesTableProps {
 
 export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
+  const [invoiceToDelete, setInvoiceToDelete] = useState<Invoice | null>(null);
+  const deleteInvoice = useDeleteInvoice();
   const handleDownloadPDF = async (invoice: Invoice) => {
     try {
       const { data: client } = await supabase
@@ -115,26 +109,17 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
     }
   };
 
-  const handleDeleteClick = (id: string) => {
-    setInvoiceToDelete(id);
+  const handleDeleteClick = (invoice: Invoice) => {
+    setInvoiceToDelete(invoice);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (!invoiceToDelete) return;
-
-    try {
-      const { error } = await supabase.from("invoices").delete().eq("id", invoiceToDelete);
-      if (error) throw error;
-      toast.success("Invoice deleted successfully");
-      onRefresh();
-    } catch (error) {
-      console.error("Error deleting invoice:", error);
-      toast.error("Failed to delete invoice");
-    } finally {
-      setDeleteDialogOpen(false);
-      setInvoiceToDelete(null);
-    }
+    await deleteInvoice.mutateAsync(invoiceToDelete.id);
+    setDeleteDialogOpen(false);
+    setInvoiceToDelete(null);
+    onRefresh();
   };
 
   return (
@@ -154,7 +139,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
             {invoices.map((invoice) => (
               <TableRow key={invoice.id} className="hover:bg-muted/50 transition-colors">
                 <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                <TableCell className="font-semibold">KSH {Number(invoice.amount).toLocaleString()}</TableCell>
+                <TableCell className="font-semibold">{formatCurrency(invoice.amount)}</TableCell>
                 <TableCell>
                   <Badge
                     variant={
@@ -168,7 +153,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                     {invoice.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{new Date(invoice.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>{formatDateShort(invoice.created_at)}</TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
                     <Button 
@@ -210,7 +195,7 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteClick(invoice.id)}
+                      onClick={() => handleDeleteClick(invoice)}
                       title="Delete"
                       className="h-9 w-9 hover:text-destructive"
                     >
@@ -224,22 +209,14 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
         </Table>
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Invoice</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this invoice? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Invoice"
+        description={`Are you sure you want to delete invoice "${invoiceToDelete?.invoice_number}"? This action cannot be undone.`}
+        isLoading={deleteInvoice.isPending}
+      />
     </>
   );
 }

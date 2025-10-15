@@ -1,18 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmDialog } from "@/shared/components/DeleteConfirmDialog";
+import { useDeleteProduct } from "@/hooks/useProducts";
+import { formatCurrency } from "@/shared/utils";
 import {
   Table,
   TableBody,
@@ -33,28 +24,20 @@ interface ProductsTableProps {
 
 export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const deleteProduct = useDeleteProduct();
 
-  const handleDeleteClick = (id: string) => {
-    setProductToDelete(id);
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (!productToDelete) return;
-
-    try {
-      const { error } = await supabase.from("products").delete().eq("id", productToDelete);
-      if (error) throw error;
-      toast.success("Product deleted successfully");
-      onRefresh();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product");
-    } finally {
-      setDeleteDialogOpen(false);
-      setProductToDelete(null);
-    }
+    await deleteProduct.mutateAsync(productToDelete.id);
+    setDeleteDialogOpen(false);
+    setProductToDelete(null);
+    onRefresh();
   };
 
   return (
@@ -74,7 +57,7 @@ export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProp
               <TableRow key={product.id} className="hover:bg-muted/50 transition-colors">
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell className="text-muted-foreground">{product.description || "-"}</TableCell>
-                <TableCell className="font-semibold">KSH {Number(product.price).toLocaleString()}</TableCell>
+                <TableCell className="font-semibold">{formatCurrency(product.price)}</TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
                     <Button 
@@ -89,7 +72,7 @@ export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProp
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteClick(product.id)}
+                      onClick={() => handleDeleteClick(product)}
                       title="Delete"
                       className="h-9 w-9 hover:text-destructive"
                     >
@@ -103,22 +86,14 @@ export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProp
         </Table>
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this product? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Product"
+        description={`Are you sure you want to delete "${productToDelete?.name}"? This action cannot be undone.`}
+        isLoading={deleteProduct.isPending}
+      />
     </>
   );
 }
