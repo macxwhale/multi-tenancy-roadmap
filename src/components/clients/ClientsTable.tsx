@@ -52,12 +52,12 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
             <div className="flex items-center justify-between pt-2 border-t border-border/30">
               <span className="text-xs text-muted-foreground">Status</span>
               <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                client.status === "active"
+                client.status === "open"
                   ? "bg-success/5 text-success border border-success/30"
                   : "bg-muted text-muted-foreground border border-border/50"
               }`}>
-                <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${client.status === "active" ? "bg-success" : "bg-muted-foreground"}`} />
-                {client.status === "active" ? "Active" : "Inactive"}
+                <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${client.status === "open" ? "bg-success" : "bg-muted-foreground"}`} />
+                {client.status === "open" ? "Open" : "Closed"}
               </div>
             </div>
           </div>

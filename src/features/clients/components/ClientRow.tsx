@@ -49,13 +49,13 @@ export function ClientRow({ client, onEdit, onRefresh, mobileActions }: ClientRo
         <Badge
           variant="outline"
           className={
-            client.status === "active"
+            client.status === "open"
               ? "bg-success/5 text-success border-success/30 font-medium px-3 py-1"
               : "bg-muted text-muted-foreground border-border/50 font-medium px-3 py-1"
           }
         >
-          <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${client.status === "active" ? "bg-success" : "bg-muted-foreground"}`} />
-          {client.status === "active" ? "Active" : "Inactive"}
+          <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${client.status === "open" ? "bg-success" : "bg-muted-foreground"}`} />
+          {client.status === "open" ? "Open" : "Closed"}
         </Badge>
       </TableCell>
       <TableCell className="py-4 text-right">
