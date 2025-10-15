@@ -19,8 +19,8 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
-          name: string
-          phone_number: string | null
+          name: string | null
+          phone_number: string
           status: string | null
           tenant_id: string
           total_balance: number
@@ -30,8 +30,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          name: string
-          phone_number?: string | null
+          name?: string | null
+          phone_number: string
           status?: string | null
           tenant_id: string
           total_balance?: number
@@ -41,8 +41,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          name?: string
-          phone_number?: string | null
+          name?: string | null
+          phone_number?: string
           status?: string | null
           tenant_id?: string
           total_balance?: number
