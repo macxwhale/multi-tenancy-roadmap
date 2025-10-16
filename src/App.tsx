@@ -7,7 +7,6 @@ import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Invoices from "./pages/Invoices";
-import Transactions from "./pages/Transactions";
 import Products from "./pages/Products";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -64,14 +63,6 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Invoices />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/transactions"
-            element={
-              <ProtectedRoute>
-                <Transactions />
               </ProtectedRoute>
             }
           />

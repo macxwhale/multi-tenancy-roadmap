@@ -27,9 +27,6 @@ export const queryKeys = {
   invoices: ['invoices'] as const,
   invoiceById: (id: string) => ['invoices', id] as const,
   invoicesByClient: (clientId: string) => ['invoices', 'client', clientId] as const,
-  transactions: ['transactions'] as const,
-  transactionById: (id: string) => ['transactions', id] as const,
-  transactionsByClient: (clientId: string) => ['transactions', 'client', clientId] as const,
   products: ['products'] as const,
   productById: (id: string) => ['products', id] as const,
 };

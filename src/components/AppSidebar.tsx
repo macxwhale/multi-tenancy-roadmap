@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LayoutDashboard, Users, FileText, DollarSign, Package, ChevronRight, Settings } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Package, ChevronRight, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -30,7 +30,6 @@ const menuGroups = [
     items: [
       { title: "Customers", url: "/clients", icon: Users },
       { title: "Invoices", url: "/invoices", icon: FileText },
-      { title: "Transactions", url: "/transactions", icon: DollarSign },
       { title: "Products", url: "/products", icon: Package },
     ]
   }
