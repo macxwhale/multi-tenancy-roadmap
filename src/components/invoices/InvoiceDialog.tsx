@@ -114,7 +114,8 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
+        <div className="w-full">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">{invoice ? "Edit Invoice" : "Create Invoice"}</DialogTitle>
         </DialogHeader>
@@ -132,7 +133,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                         <SelectValue placeholder="Select client" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                     <SelectContent position="popper" sideOffset={4} className="max-h-[200px]">
                       {activeClients.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
                           {client.name}
@@ -169,7 +170,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                     <SelectContent position="popper" sideOffset={4}>
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="paid">Paid</SelectItem>
                       <SelectItem value="overdue">Overdue</SelectItem>
@@ -197,6 +198,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
             </Button>
           </form>
         </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
