@@ -136,8 +136,8 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
     }
   };
 
-  // Filter active clients
-  const activeClients = clients.filter(c => c.status === 'active');
+  // Show all clients (not just active ones) to ensure dropdown is never empty
+  const availableClients = clients || [];
 
   return (
     <>
@@ -161,12 +161,18 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                           <SelectValue placeholder="Select client" />
                         </SelectTrigger>
                       </FormControl>
-                       <SelectContent position="popper" sideOffset={4} className="max-h-[200px]">
-                        {activeClients.map((client) => (
-                          <SelectItem key={client.id} value={client.id}>
-                            {client.name}
-                          </SelectItem>
-                        ))}
+                       <SelectContent position="popper" sideOffset={4} className="max-h-[200px] bg-popover z-50">
+                        {availableClients.length === 0 ? (
+                          <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                            No clients found. Add a client first.
+                          </div>
+                        ) : (
+                          availableClients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -193,14 +199,20 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                             <SelectValue placeholder="Select a product" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent position="popper" sideOffset={4} className="max-h-[200px]">
-                          {products
-                            ?.filter((product) => product.price)
-                            .map((product) => (
-                              <SelectItem key={product.id} value={product.id}>
-                                {product.name} - KES {product.price.toLocaleString()}
-                              </SelectItem>
-                            ))}
+                        <SelectContent position="popper" sideOffset={4} className="max-h-[200px] bg-popover z-50">
+                          {products.length === 0 ? (
+                            <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                              No products found. Add a product.
+                            </div>
+                          ) : (
+                            products
+                              .filter((product) => product.price)
+                              .map((product) => (
+                                <SelectItem key={product.id} value={product.id}>
+                                  {product.name} - KES {product.price.toLocaleString()}
+                                </SelectItem>
+                              ))
+                          )}
                         </SelectContent>
                       </Select>
                       <Button
