@@ -1,4 +1,9 @@
-export const sendWhatsAppInvoice = (phoneNumber: string, invoiceNumber: string, amount: number) => {
+export const sendWhatsAppInvoice = (
+  phoneNumber: string, 
+  invoiceNumber: string, 
+  amount: number,
+  productName?: string
+) => {
   // Format phone number for WhatsApp (remove spaces, add country code if needed)
   const formattedPhone = phoneNumber.replace(/\s+/g, "");
   const phone = formattedPhone.startsWith("+") ? formattedPhone : `+254${formattedPhone.replace(/^0/, "")}`;
@@ -6,6 +11,7 @@ export const sendWhatsAppInvoice = (phoneNumber: string, invoiceNumber: string, 
   const message = encodeURIComponent(
     `Hello! Here is your invoice:\n\n` +
     `Invoice #: ${invoiceNumber}\n` +
+    (productName ? `Product: ${productName}\n` : '') +
     `Amount: KES ${amount.toLocaleString()}\n\n` +
     `Thank you for your business!`
   );

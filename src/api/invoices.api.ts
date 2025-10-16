@@ -14,7 +14,7 @@ export const getInvoices = async (): Promise<Invoice[]> => {
 
   const { data, error } = await supabase
     .from('invoices')
-    .select('*')
+    .select('*, products(id, name, price, description)')
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false });
 
@@ -30,7 +30,7 @@ export const getInvoicesByClient = async (clientId: string): Promise<Invoice[]> 
 
   const { data, error } = await supabase
     .from('invoices')
-    .select('*')
+    .select('*, products(id, name, price, description)')
     .eq('client_id', clientId)
     .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false });
@@ -47,7 +47,7 @@ export const getInvoiceById = async (id: string): Promise<Invoice | null> => {
 
   const { data, error } = await supabase
     .from('invoices')
-    .select('*')
+    .select('*, products(id, name, price, description)')
     .eq('id', id)
     .eq('tenant_id', tenantId)
     .single();

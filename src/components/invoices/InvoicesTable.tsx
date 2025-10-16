@@ -51,8 +51,30 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
         .select("business_name, phone_number")
         .eq("id", profile?.tenant_id)
         .single();
+
+      let productData = null;
+      if (invoice.product_id) {
+        const { data: product } = await supabase
+          .from("products")
+          .select("name, description, price")
+          .eq("id", invoice.product_id)
+          .single();
+        
+        if (product) {
+          productData = {
+            name: product.name,
+            description: product.description,
+            price: product.price,
+          };
+        }
+      }
       
-      downloadInvoicePDF({ ...invoice, client: client || undefined, tenant: tenant || undefined });
+      downloadInvoicePDF({ 
+        ...invoice, 
+        product: productData,
+        client: client || undefined, 
+        tenant: tenant || undefined 
+      });
       toast.success("Invoice downloaded");
     } catch (error) {
       console.error("Error downloading invoice:", error);
@@ -80,8 +102,30 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
         .select("business_name, phone_number")
         .eq("id", profile?.tenant_id)
         .single();
+
+      let productData = null;
+      if (invoice.product_id) {
+        const { data: product } = await supabase
+          .from("products")
+          .select("name, description, price")
+          .eq("id", invoice.product_id)
+          .single();
+        
+        if (product) {
+          productData = {
+            name: product.name,
+            description: product.description,
+            price: product.price,
+          };
+        }
+      }
       
-      printInvoicePDF({ ...invoice, client: client || undefined, tenant: tenant || undefined });
+      printInvoicePDF({ 
+        ...invoice, 
+        product: productData,
+        client: client || undefined, 
+        tenant: tenant || undefined 
+      });
     } catch (error) {
       console.error("Error printing invoice:", error);
       toast.error("Failed to print invoice");
@@ -100,8 +144,18 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
         toast.error("Client phone number not found");
         return;
       }
+
+      let productName: string | undefined;
+      if (invoice.product_id) {
+        const { data: product } = await supabase
+          .from("products")
+          .select("name")
+          .eq("id", invoice.product_id)
+          .single();
+        productName = product?.name;
+      }
       
-      sendWhatsAppInvoice(client.phone_number, invoice.invoice_number, Number(invoice.amount));
+      sendWhatsAppInvoice(client.phone_number, invoice.invoice_number, Number(invoice.amount), productName);
       toast.success("Opening WhatsApp...");
     } catch (error) {
       console.error("Error sending WhatsApp:", error);

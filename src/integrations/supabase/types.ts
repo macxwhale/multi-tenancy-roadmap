@@ -66,6 +66,7 @@ export type Database = {
           id: string
           invoice_number: string
           notes: string | null
+          product_id: string | null
           status: string
           tenant_id: string
           updated_at: string
@@ -77,6 +78,7 @@ export type Database = {
           id?: string
           invoice_number: string
           notes?: string | null
+          product_id?: string | null
           status?: string
           tenant_id: string
           updated_at?: string
@@ -88,6 +90,7 @@ export type Database = {
           id?: string
           invoice_number?: string
           notes?: string | null
+          product_id?: string | null
           status?: string
           tenant_id?: string
           updated_at?: string
@@ -105,6 +108,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
           {
