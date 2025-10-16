@@ -28,18 +28,18 @@ export default function Clients() {
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <div className="h-10 w-48 bg-muted animate-pulse rounded-lg" />
-            <div className="h-4 w-96 bg-muted animate-pulse rounded-lg" />
+      <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2 w-full sm:w-auto">
+            <div className="h-8 sm:h-10 w-40 sm:w-48 bg-muted animate-pulse rounded-lg" />
+            <div className="h-4 w-full sm:w-96 max-w-[300px] sm:max-w-none bg-muted animate-pulse rounded-lg" />
           </div>
-          <div className="h-11 w-36 bg-muted animate-pulse rounded-lg" />
+          <div className="h-11 w-full sm:w-36 bg-muted animate-pulse rounded-lg" />
         </div>
         <div className="border border-border/50 rounded-lg overflow-hidden shadow-google">
           <div className="bg-muted/30 h-14 w-full" />
           {[1, 2, 3].map((i) => (
-            <div key={i} className="border-t border-border/50 p-5 space-y-3">
+            <div key={i} className="border-t border-border/50 p-4 sm:p-5 space-y-3">
               <div className="h-4 bg-muted animate-pulse rounded w-1/4" />
               <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
             </div>
@@ -50,13 +50,13 @@ export default function Clients() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Clients</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage your customer relationships and accounts</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Clients</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">Manage your customer relationships and accounts</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="default" className="gap-2 shadow-sm">
+        <Button onClick={() => setDialogOpen(true)} size="default" className="gap-2 shadow-sm w-full sm:w-auto h-11 text-base sm:text-sm">
           <Plus className="h-4 w-4" />
           Add Client
         </Button>

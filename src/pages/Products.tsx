@@ -28,13 +28,13 @@ export default function Products() {
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <Skeleton className="h-10 w-44 rounded-lg" />
-            <Skeleton className="h-4 w-96 rounded-lg" />
+      <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2 w-full sm:w-auto">
+            <Skeleton className="h-8 sm:h-10 w-40 sm:w-44 rounded-lg" />
+            <Skeleton className="h-4 w-full sm:w-96 max-w-[300px] sm:max-w-none rounded-lg" />
           </div>
-          <Skeleton className="h-11 w-36 rounded-lg" />
+          <Skeleton className="h-11 w-full sm:w-36 rounded-lg" />
         </div>
         <div className="border border-border/50 rounded-lg overflow-hidden shadow-google">
           <Skeleton className="h-14 w-full" />
@@ -47,13 +47,13 @@ export default function Products() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Products</h1>
-          <p className="text-muted-foreground mt-2">Manage your product catalog and inventory</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">Products</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1.5 sm:mt-2">Manage your product catalog and inventory</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto">
+        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto h-11 text-base">
           <Plus className="h-5 w-5" />
           Add Product
         </Button>

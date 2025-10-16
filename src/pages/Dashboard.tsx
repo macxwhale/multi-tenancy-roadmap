@@ -64,9 +64,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <Skeleton className="h-10 w-48" />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+        <Skeleton className="h-8 sm:h-10 w-40 sm:w-48" />
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Skeleton className="h-36 w-full rounded-lg" />
           <Skeleton className="h-36 w-full rounded-lg" />
           <Skeleton className="h-36 w-full rounded-lg" />
@@ -77,23 +77,24 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex items-start justify-between">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1.5 sm:mb-2">
             Hello, {getUserName()}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Here's a summary of your account activity for this week.
           </p>
         </div>
-        <Badge variant="secondary" className="flex items-center gap-2 px-4 py-2 text-sm">
-          <MapPin className="h-4 w-4" />
-          Nairobi, Kenya – {getCurrentTime()}
+        <Badge variant="secondary" className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm whitespace-nowrap">
+          <MapPin className="h-3 sm:h-4 w-3 sm:w-4" />
+          <span className="hidden sm:inline">Nairobi, Kenya – {getCurrentTime()}</span>
+          <span className="sm:hidden">NBI – {getCurrentTime()}</span>
         </Badge>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-primary/5 to-transparent">
             <CardTitle className="text-sm font-semibold text-muted-foreground">Total Clients</CardTitle>
