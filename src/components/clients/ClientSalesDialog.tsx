@@ -84,13 +84,13 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[700px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Receipt className="h-5 w-5 text-accent" />
             Client Account
           </DialogTitle>
-          <DialogDescription>View client sales and invoices</DialogDescription>
+          <DialogDescription className="text-sm">View client sales and invoices</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -138,14 +138,49 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
               </h3>
               <Button
                 size="sm"
-                className="bg-success hover:bg-success/90 text-success-foreground"
+                className="bg-success hover:bg-success/90 text-success-foreground h-9 sm:h-8 text-sm"
                 onClick={() => setAddSalesDialogOpen(true)}
               >
                 <Plus className="h-4 w-4 mr-1" />
-                Add Sales
+                <span className="hidden xs:inline">Add Sales</span>
+                <span className="xs:hidden">Add</span>
               </Button>
             </div>
-            <div className="border rounded-lg overflow-hidden">
+            
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Loading...</div>
+              ) : invoices.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">No invoices found</div>
+              ) : (
+                invoices.map((invoice) => (
+                  <div key={invoice.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-success" />
+                        <span className="font-medium">{invoice.invoice_number}</span>
+                      </div>
+                      <span className="font-semibold">KSH {Number(invoice.amount).toLocaleString()}</span>
+                    </div>
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Button variant="outline" size="sm" className="flex-1 h-8 text-xs">
+                        View
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1 h-8 text-xs">
+                        PDF
+                      </Button>
+                      <Button variant="outline" size="sm" className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10">
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-primary hover:bg-primary">
@@ -157,13 +192,13 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
                         Loading...
                       </TableCell>
                     </TableRow>
                   ) : invoices.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
                         No invoices found
                       </TableCell>
                     </TableRow>
@@ -203,15 +238,15 @@ export function ClientSalesDialog({ open, onClose, client }: ClientSalesDialogPr
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
-              className="bg-success hover:bg-success/90 text-success-foreground"
+              className="bg-success hover:bg-success/90 text-success-foreground flex-1 h-11 sm:h-10 text-base sm:text-sm"
               onClick={handleActivateAccount}
               disabled={client.status === "active"}
             >
               {client.status === "active" ? "Account Active" : "Activate Client Account"}
             </Button>
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="secondary" onClick={onClose} className="flex-1 h-11 sm:h-10 text-base sm:text-sm">
               Back to Clients
             </Button>
           </div>

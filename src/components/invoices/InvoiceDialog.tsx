@@ -114,21 +114,21 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{invoice ? "Edit Invoice" : "Create Invoice"}</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">{invoice ? "Edit Invoice" : "Create Invoice"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-5">
             <FormField
               control={form.control}
               name="client_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Client</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11 sm:h-10 text-base">
                         <SelectValue placeholder="Select client" />
                       </SelectTrigger>
                     </FormControl>
@@ -149,9 +149,9 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount (KES)</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Amount (KES)</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" {...field} />
+                    <Input type="number" step="0.01" className="h-11 sm:h-10 text-base" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -162,10 +162,10 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Status</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11 sm:h-10 text-base">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -184,15 +184,15 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel className="text-sm sm:text-base">Notes</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea className="min-h-[80px] text-base" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full h-11 sm:h-10 text-base sm:text-sm">
               {invoice ? "Update" : "Create"}
             </Button>
           </form>

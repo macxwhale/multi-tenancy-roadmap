@@ -82,32 +82,32 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Coins className="h-5 w-5 text-accent" />
             Client Account Top-up
           </DialogTitle>
-          <DialogDescription>Add payment to client account balance</DialogDescription>
+          <DialogDescription className="text-sm">Add payment to client account balance</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div>
             <h3 className="text-sm font-semibold mb-3">Financial Summary</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="border border-warning/30 rounded-lg p-4 bg-warning/5">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="border border-warning/30 rounded-lg p-3 sm:p-4 bg-warning/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Coins className="h-5 w-5 text-warning" />
-                  <span className="font-semibold text-lg">
+                  <Coins className="h-4 sm:h-5 w-4 sm:w-5 text-warning" />
+                  <span className="font-semibold text-base sm:text-lg">
                     KSH {client.totalInvoiced.toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Total Invoiced</div>
               </div>
-              <div className="border border-success/30 rounded-lg p-4 bg-success/5">
+              <div className="border border-success/30 rounded-lg p-3 sm:p-4 bg-success/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-5 w-5 text-success" />
-                  <span className="font-semibold text-lg">
+                  <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-success" />
+                  <span className="font-semibold text-base sm:text-lg">
                     KSH {(client.totalInvoiced - client.totalPaid).toLocaleString()}
                   </span>
                 </div>
@@ -117,7 +117,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
           </div>
 
           <div>
-            <Label className="flex items-center gap-2 mb-2 font-medium">
+            <Label className="flex items-center gap-2 mb-2 font-medium text-sm sm:text-base">
               <CalendarIcon className="h-4 w-4" />
               Payment Date
             </Label>
@@ -126,7 +126,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal h-11 sm:h-10 text-base",
                     !date && "text-muted-foreground"
                   )}
                 >
@@ -147,7 +147,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
           </div>
 
           <div>
-            <Label className="flex items-center gap-2 mb-2 font-medium">
+            <Label className="flex items-center gap-2 mb-2 font-medium text-sm sm:text-base">
               <DollarSign className="h-4 w-4" />
               Top-up Amount
             </Label>
@@ -156,7 +156,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
               placeholder="Enter amount in KSH"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full"
+              className="w-full h-11 sm:h-10 text-base"
               min="0"
               step="0.01"
               required
@@ -164,10 +164,10 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             <p className="text-xs text-muted-foreground mt-1">Enter the payment amount</p>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               type="submit"
-              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground h-11 sm:h-10 text-base sm:text-sm"
               disabled={loading}
             >
               {loading ? "Processing..." : "Top Up Account"}
@@ -175,7 +175,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             <Button
               type="button"
               variant="secondary"
-              className="flex-1"
+              className="flex-1 h-11 sm:h-10 text-base sm:text-sm"
               onClick={onClose}
             >
               Cancel

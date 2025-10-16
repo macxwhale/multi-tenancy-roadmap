@@ -70,13 +70,13 @@ export function ClientTransactionsDialog({ open, onClose, client }: ClientTransa
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[600px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <ArrowLeftRight className="h-5 w-5 text-info" />
             Client Transactions
           </DialogTitle>
-          <DialogDescription>View transaction history and invoices</DialogDescription>
+          <DialogDescription className="text-sm">View transaction history and invoices</DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="transactions" className="w-full">

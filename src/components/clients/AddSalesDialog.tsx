@@ -69,19 +69,19 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[500px] mx-4">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <ShoppingCart className="h-5 w-5 text-accent" />
             Add Sales
           </DialogTitle>
-          <DialogDescription>Create a new invoice for this client</DialogDescription>
+          <DialogDescription className="text-sm">Create a new invoice for this client</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          <div className="space-y-4 sm:space-y-5">
             <div>
-              <Label htmlFor="product" className="flex items-center gap-2 font-medium">
+              <Label htmlFor="product" className="flex items-center gap-2 font-medium text-sm sm:text-base">
                 <ShoppingCart className="h-4 w-4" />
                 Product Name
               </Label>
@@ -91,13 +91,13 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 required
-                className="mt-2"
+                className="mt-2 h-11 sm:h-10 text-base"
               />
               <p className="text-xs text-muted-foreground mt-1">What was sold to the client</p>
             </div>
 
             <div>
-              <Label htmlFor="price" className="flex items-center gap-2 font-medium">
+              <Label htmlFor="price" className="flex items-center gap-2 font-medium text-sm sm:text-base">
                 <DollarSign className="h-4 w-4" />
                 Price
               </Label>
@@ -109,7 +109,7 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="mt-2"
+                className="mt-2 h-11 sm:h-10 text-base"
               />
               <p className="text-xs text-muted-foreground mt-1">Amount to be invoiced</p>
             </div>
@@ -117,7 +117,7 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
 
           <Button
             type="submit"
-            className="w-full bg-success hover:bg-success/90 text-success-foreground"
+            className="w-full bg-success hover:bg-success/90 text-success-foreground h-11 sm:h-10 text-base sm:text-sm"
             disabled={loading}
           >
             {loading ? "Adding..." : "Add Product"}

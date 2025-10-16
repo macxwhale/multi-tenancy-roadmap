@@ -88,30 +88,32 @@ export function ProductDialog({ open, onClose, product }: ProductDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg mx-4">
         <DialogHeader>
-          <DialogTitle>{product ? "Edit Product" : "Add Product"}</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">{product ? "Edit Product" : "Add Product"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name" className="text-sm sm:text-base">Name</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
+              className="h-11 sm:h-10 text-base mt-1.5"
             />
           </div>
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm sm:text-base">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="min-h-[80px] text-base mt-1.5"
             />
           </div>
           <div>
-            <Label htmlFor="price">Price (KES)</Label>
+            <Label htmlFor="price" className="text-sm sm:text-base">Price (KES)</Label>
             <Input
               id="price"
               type="number"
@@ -119,13 +121,14 @@ export function ProductDialog({ open, onClose, product }: ProductDialogProps) {
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
               required
+              className="h-11 sm:h-10 text-base mt-1.5"
             />
           </div>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+            <Button type="button" variant="secondary" className="flex-1 sm:flex-initial h-11 sm:h-10 text-base sm:text-sm" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="flex-1 sm:flex-initial h-11 sm:h-10 text-base sm:text-sm">
               {loading ? "Saving..." : "Save"}
             </Button>
           </div>
