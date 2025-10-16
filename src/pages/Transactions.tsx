@@ -1,20 +1,11 @@
-import { useState } from "react";
 import { DollarSign } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionsTable } from "@/components/transactions/TransactionsTable";
 import { useTransactions } from "@/hooks/useTransactions";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Transaction = Tables<"transactions">;
 
 export default function Transactions() {
   const { data: transactions = [], isLoading: loading, refetch } = useTransactions();
-  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-
-  const handleEdit = (transaction: Transaction) => {
-    setEditingTransaction(transaction);
-  };
 
   if (loading) {
     return (
@@ -54,7 +45,6 @@ export default function Transactions() {
       ) : (
         <TransactionsTable
           transactions={transactions}
-          onEdit={handleEdit}
           onRefresh={() => refetch()}
         />
       )}

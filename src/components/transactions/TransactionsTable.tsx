@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { DeleteConfirmDialog } from "@/shared/components/DeleteConfirmDialog";
 import { useDeleteTransaction } from "@/hooks/useTransactions";
 import { formatCurrency, formatDateShort } from "@/shared/utils";
@@ -19,13 +19,11 @@ type Transaction = Tables<"transactions">;
 
 interface TransactionsTableProps {
   transactions: Transaction[];
-  onEdit: (transaction: Transaction) => void;
   onRefresh: () => void;
 }
 
 export function TransactionsTable({
   transactions,
-  onEdit,
   onRefresh,
 }: TransactionsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -78,20 +76,11 @@ export function TransactionsTable({
             )}
             
             <div className="flex gap-2 pt-2 border-t border-border/30">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => onEdit(transaction)}
-                className="flex-1 h-8 hover:bg-primary/10 hover:text-primary"
-              >
-                <Edit className="h-3.5 w-3.5 mr-1.5" />
-                Edit
-              </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDeleteClick(transaction)}
-                className="h-8 px-3 hover:bg-destructive/10 hover:text-destructive"
+                className="flex-1 h-8 hover:bg-destructive/10 hover:text-destructive"
               >
                 <Trash className="h-3.5 w-3.5 mr-1.5" />
                 Delete
@@ -137,16 +126,7 @@ export function TransactionsTable({
                 <TableCell className="py-5">{formatDateShort(transaction.date)}</TableCell>
                 <TableCell className="text-muted-foreground py-5">{transaction.notes || "-"}</TableCell>
                 <TableCell className="py-5">
-                  <div className="flex justify-end gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => onEdit(transaction)}
-                      title="Edit"
-                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
+                  <div className="flex justify-end">
                     <Button
                       variant="ghost"
                       size="icon"
