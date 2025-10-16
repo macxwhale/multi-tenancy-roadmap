@@ -32,19 +32,19 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Invoiced</span>
                 <span className="font-semibold text-foreground">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(client.totalInvoiced)}
+                  {formatCurrency(client.totalInvoiced)}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Paid</span>
                 <span className="font-semibold text-success">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(client.totalPaid)}
+                  {formatCurrency(client.totalPaid)}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">Balance</span>
                 <span className="font-semibold text-accent">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(client.totalInvoiced - client.totalPaid)}
+                  {formatCurrency(client.totalInvoiced - client.totalPaid)}
                 </span>
               </div>
             </div>
