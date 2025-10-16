@@ -42,7 +42,7 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
       const invoiceNumber = `INV-${Date.now()}`;
 
       // Create invoice
-      const { error: invoiceError } = await supabase
+      const { data: newInvoice, error: invoiceError } = await supabase
         .from("invoices")
         .insert({
           tenant_id: profile.tenant_id,
@@ -51,9 +51,31 @@ export function AddSalesDialog({ open, onClose, client }: AddSalesDialogProps) {
           amount: parseFloat(price),
           notes: productName,
           status: "pending"
-        });
+        })
+        .select()
+        .single();
 
       if (invoiceError) throw invoiceError;
+
+      // Create corresponding sale transaction
+      if (newInvoice) {
+        const { error: transactionError } = await supabase
+          .from("transactions")
+          .insert({
+            tenant_id: profile.tenant_id,
+            client_id: client.id,
+            invoice_id: newInvoice.id,
+            amount: parseFloat(price),
+            type: "sale",
+            date: new Date().toISOString(),
+            notes: `Sale: ${productName}`,
+          });
+
+        if (transactionError) {
+          console.error("Error creating sale transaction:", transactionError);
+          // Don't throw - invoice was created successfully
+        }
+      }
 
       toast.success("Sale added successfully");
       setProductName("");

@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Coins, TrendingUp, DollarSign } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalendarIcon, Coins, TrendingUp, DollarSign, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { ClientWithDetails } from "@/api/clients.api";
+import { useInvoicesByClient } from "@/hooks/useInvoices";
+import type { Tables } from "@/integrations/supabase/types";
 
 interface ClientTopUpDialogProps {
   open: boolean;
@@ -22,11 +25,61 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
   const [date, setDate] = useState<Date>(new Date());
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>("");
+  const [selectedInvoice, setSelectedInvoice] = useState<Tables<"invoices"> | null>(null);
+
+  const { data: invoices = [], refetch: refetchInvoices } = useInvoicesByClient(client?.id || "");
+
+  // Filter unpaid and partially paid invoices
+  const unpaidInvoices = invoices.filter(inv => inv.status !== "paid");
+
+  // Update selected invoice when selection changes
+  useEffect(() => {
+    if (selectedInvoiceId) {
+      const invoice = unpaidInvoices.find(inv => inv.id === selectedInvoiceId);
+      setSelectedInvoice(invoice || null);
+    } else {
+      setSelectedInvoice(null);
+    }
+  }, [selectedInvoiceId, unpaidInvoices]);
+
+  // Calculate outstanding balance for selected invoice
+  const getInvoiceBalance = async (invoiceId: string, invoiceAmount: number) => {
+    const { data: payments } = await supabase
+      .from("transactions")
+      .select("amount")
+      .eq("invoice_id", invoiceId)
+      .eq("type", "payment");
+    
+    const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0;
+    return invoiceAmount - totalPaid;
+  };
+
+  const [invoiceBalance, setInvoiceBalance] = useState<number>(0);
+
+  useEffect(() => {
+    if (selectedInvoice) {
+      getInvoiceBalance(selectedInvoice.id, Number(selectedInvoice.amount)).then(setInvoiceBalance);
+    } else {
+      setInvoiceBalance(0);
+    }
+  }, [selectedInvoice]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!client || !amount) {
       toast.error("Please enter an amount");
+      return;
+    }
+
+    if (!selectedInvoiceId) {
+      toast.error("Please select an invoice to pay");
+      return;
+    }
+
+    const paymentAmount = Number(amount);
+    if (paymentAmount <= 0) {
+      toast.error("Payment amount must be greater than zero");
       return;
     }
 
@@ -43,36 +96,56 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
 
       if (!profile) throw new Error("Profile not found");
 
-      // Create a payment transaction
+      // Create a payment transaction linked to the invoice
       const { error: transactionError } = await supabase
         .from("transactions")
         .insert({
           client_id: client.id,
           tenant_id: profile.tenant_id,
-          amount: Number(amount),
+          invoice_id: selectedInvoiceId,
+          amount: paymentAmount,
           type: "payment",
           date: date.toISOString(),
-          notes: "Top-up payment",
+          notes: `Payment for Invoice ${selectedInvoice?.invoice_number}`,
         });
 
       if (transactionError) throw transactionError;
 
-      // Update client balance
-      const newBalance = Number(client.total_balance) - Number(amount);
-      const { error: updateError } = await supabase
-        .from("clients")
-        .update({ total_balance: newBalance })
-        .eq("id", client.id);
+      // Calculate total paid for this invoice
+      const { data: allPayments } = await supabase
+        .from("transactions")
+        .select("amount")
+        .eq("invoice_id", selectedInvoiceId)
+        .eq("type", "payment");
 
-      if (updateError) throw updateError;
+      const totalPaid = allPayments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0;
+      const invoiceAmount = Number(selectedInvoice?.amount || 0);
 
-      toast.success("Top-up successful");
+      // Update invoice status based on payment
+      let newStatus = "pending";
+      if (totalPaid >= invoiceAmount) {
+        newStatus = "paid";
+      } else if (totalPaid > 0) {
+        newStatus = "partial";
+      }
+
+      const { error: invoiceUpdateError } = await supabase
+        .from("invoices")
+        .update({ status: newStatus })
+        .eq("id", selectedInvoiceId);
+
+      if (invoiceUpdateError) throw invoiceUpdateError;
+
+      toast.success(`Payment of KSH ${paymentAmount.toLocaleString()} recorded successfully`);
       setAmount("");
       setDate(new Date());
+      setSelectedInvoiceId("");
+      setSelectedInvoice(null);
+      refetchInvoices();
       onClose();
     } catch (error) {
-      console.error("Error processing top-up:", error);
-      toast.error("Failed to process top-up");
+      console.error("Error processing payment:", error);
+      toast.error("Failed to process payment");
     } finally {
       setLoading(false);
     }
@@ -93,7 +166,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
 
         <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
           <div>
-            <h3 className="text-sm font-semibold mb-3">Financial Summary</h3>
+            <h3 className="text-sm font-semibold mb-3">Account Summary</h3>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="border border-warning/30 rounded-lg p-3 sm:p-4 bg-warning/5">
                 <div className="flex items-center gap-2 mb-2">
@@ -104,16 +177,47 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 </div>
                 <div className="text-xs text-muted-foreground">Total Invoiced</div>
               </div>
-              <div className="border border-success/30 rounded-lg p-3 sm:p-4 bg-success/5">
+              <div className="border border-destructive/30 rounded-lg p-3 sm:p-4 bg-destructive/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-success" />
+                  <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-destructive" />
                   <span className="font-semibold text-base sm:text-lg">
                     KSH {(client.totalInvoiced - client.totalPaid).toLocaleString()}
                   </span>
                 </div>
-                <div className="text-xs text-muted-foreground">Current Balance</div>
+                <div className="text-xs text-muted-foreground">Outstanding Balance</div>
               </div>
             </div>
+          </div>
+
+          <div>
+            <Label className="flex items-center gap-2 mb-2 font-medium text-sm sm:text-base">
+              <FileText className="h-4 w-4" />
+              Select Invoice to Pay
+            </Label>
+            <Select value={selectedInvoiceId} onValueChange={setSelectedInvoiceId}>
+              <SelectTrigger className="w-full h-11 sm:h-10 text-base">
+                <SelectValue placeholder="Choose an unpaid invoice" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                {unpaidInvoices.length === 0 ? (
+                  <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                    No unpaid invoices found
+                  </div>
+                ) : (
+                  unpaidInvoices.map((invoice) => (
+                    <SelectItem key={invoice.id} value={invoice.id}>
+                      {invoice.invoice_number} - KSH {Number(invoice.amount).toLocaleString()} ({invoice.status})
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            {selectedInvoice && (
+              <div className="mt-2 p-3 border border-accent/30 rounded-lg bg-accent/5">
+                <p className="text-xs text-muted-foreground mb-1">Outstanding balance for this invoice:</p>
+                <p className="font-semibold text-base">KSH {invoiceBalance.toLocaleString()}</p>
+              </div>
+            )}
           </div>
 
           <div>
@@ -149,28 +253,33 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
           <div>
             <Label className="flex items-center gap-2 mb-2 font-medium text-sm sm:text-base">
               <DollarSign className="h-4 w-4" />
-              Top-up Amount
+              Payment Amount
             </Label>
             <Input
               type="number"
-              placeholder="Enter amount in KSH"
+              placeholder="Enter payment amount in KSH"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full h-11 sm:h-10 text-base"
-              min="0"
+              min="0.01"
               step="0.01"
               required
+              disabled={!selectedInvoiceId}
             />
-            <p className="text-xs text-muted-foreground mt-1">Enter the payment amount</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {selectedInvoiceId 
+                ? "Amount can be partial or full payment" 
+                : "Select an invoice first"}
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               type="submit"
-              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground h-11 sm:h-10 text-base sm:text-sm"
-              disabled={loading}
+              className="flex-1 bg-success hover:bg-success/90 text-success-foreground h-11 sm:h-10 text-base sm:text-sm"
+              disabled={loading || !selectedInvoiceId}
             >
-              {loading ? "Processing..." : "Top Up Account"}
+              {loading ? "Processing..." : "Record Payment"}
             </Button>
             <Button
               type="button"

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +39,7 @@ const invoiceSchema = z.object({
   client_id: z.string().min(1, "Client is required"),
   product_id: z.string().optional(),
   amount: z.string().min(1, "Amount is required"),
-  status: z.enum(["pending", "paid", "overdue"]),
+  status: z.enum(["pending", "paid", "overdue", "partial"]),
   notes: z.string().optional(),
 });
 
@@ -124,7 +125,32 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
         });
         toast.success("Invoice updated successfully");
       } else {
-        await createInvoice.mutateAsync(invoiceData);
+        const createdInvoice = await createInvoice.mutateAsync(invoiceData);
+        
+        // Create corresponding sale transaction for new invoices
+        if (createdInvoice) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("tenant_id")
+              .eq("user_id", user.id)
+              .single();
+
+            if (profile) {
+              await supabase.from("transactions").insert({
+                tenant_id: profile.tenant_id,
+                client_id: data.client_id,
+                invoice_id: createdInvoice.id,
+                amount: parseFloat(data.amount),
+                type: "sale",
+                date: new Date().toISOString(),
+                notes: data.notes || `Invoice ${invoiceData.invoice_number}`,
+              });
+            }
+          }
+        }
+        
         toast.success("Invoice created successfully");
       }
 
@@ -264,6 +290,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
                       </FormControl>
                        <SelectContent position="popper" sideOffset={4}>
                         <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="partial">Partial</SelectItem>
                         <SelectItem value="paid">Paid</SelectItem>
                         <SelectItem value="overdue">Overdue</SelectItem>
                       </SelectContent>
