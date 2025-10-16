@@ -164,50 +164,51 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
               )}
             </div>
             
-            <div className="flex gap-1 pt-2 border-t border-border/30">
+            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border/30">
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => handleDownloadPDF(invoice)} 
-                className="flex-1 h-8 hover:bg-primary/10 hover:text-primary"
+                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
               >
-                <Download className="h-3.5 w-3.5 mr-1.5" />
+                <Download className="h-3.5 w-3.5 mr-1" />
                 PDF
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => handlePrintPDF(invoice)} 
-                className="flex-1 h-8 hover:bg-primary/10 hover:text-primary"
+                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
               >
-                <Printer className="h-3.5 w-3.5 mr-1.5" />
+                <Printer className="h-3.5 w-3.5 mr-1" />
                 Print
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => handleSendWhatsApp(invoice)} 
-                className="flex-1 h-8 hover:bg-success/10 hover:text-success"
+                className="h-8 px-2.5 hover:bg-success/10 hover:text-success text-xs"
               >
-                <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                <MessageSquare className="h-3.5 w-3.5 mr-1" />
                 Send
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => onEdit(invoice)}
-                className="flex-1 h-8 hover:bg-primary/10 hover:text-primary"
+                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
               >
-                <Edit className="h-3.5 w-3.5 mr-1.5" />
+                <Edit className="h-3.5 w-3.5 mr-1" />
                 Edit
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDeleteClick(invoice)}
-                className="h-8 px-2 hover:bg-destructive/10 hover:text-destructive"
+                className="h-8 px-2.5 hover:bg-destructive/10 hover:text-destructive text-xs"
               >
-                <Trash className="h-3.5 w-3.5" />
+                <Trash className="h-3.5 w-3.5 mr-1" />
+                Delete
               </Button>
             </div>
           </div>
