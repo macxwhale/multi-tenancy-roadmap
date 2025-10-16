@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus, DollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionsTable } from "@/components/transactions/TransactionsTable";
-import { TransactionDialog } from "@/components/transactions/TransactionDialog";
 import { useTransactions } from "@/hooks/useTransactions";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -12,18 +10,10 @@ type Transaction = Tables<"transactions">;
 
 export default function Transactions() {
   const { data: transactions = [], isLoading: loading, refetch } = useTransactions();
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
-    setDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setEditingTransaction(null);
-    refetch();
   };
 
   if (loading) {
@@ -53,21 +43,13 @@ export default function Transactions() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">Transactions</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1.5 sm:mt-2">Track all payments and financial activities</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto h-11 text-base">
-          <Plus className="h-5 w-5" />
-          Add Transaction
-        </Button>
       </div>
 
       {transactions.length === 0 ? (
         <EmptyState
           icon={DollarSign}
           title="No transactions yet"
-          description="Take it easy. Your transaction history will build naturally over time."
-          action={{
-            label: "Add Transaction",
-            onClick: () => setDialogOpen(true),
-          }}
+          description="Transactions will appear here when invoices are created or payments are recorded."
         />
       ) : (
         <TransactionsTable
@@ -76,11 +58,6 @@ export default function Transactions() {
           onRefresh={() => refetch()}
         />
       )}
-      <TransactionDialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        transaction={editingTransaction}
-      />
     </div>
   );
 }
