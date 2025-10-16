@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import type { ClientWithDetails } from "@/api/clients.api";
 import { useInvoicesByClient } from "@/hooks/useInvoices";
 import type { Tables } from "@/integrations/supabase/types";
+import { useCreateNotification } from "@/hooks/useNotifications";
 
 interface ClientTopUpDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
   const [loading, setLoading] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>("");
   const [selectedInvoice, setSelectedInvoice] = useState<Tables<"invoices"> | null>(null);
+  const createNotification = useCreateNotification();
 
   const { data: invoices = [], refetch: refetchInvoices } = useInvoicesByClient(client?.id || "");
 
@@ -135,6 +137,15 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
         .eq("id", selectedInvoiceId);
 
       if (invoiceUpdateError) throw invoiceUpdateError;
+
+      // Create notification for payment
+      createNotification.mutate({
+        title: 'Payment Received',
+        message: `Payment of KES ${paymentAmount.toLocaleString()} received from ${client.name} for Invoice ${selectedInvoice?.invoice_number}`,
+        type: 'payment',
+        link: '/clients',
+        read: false,
+      });
 
       toast.success(`Payment of KSH ${paymentAmount.toLocaleString()} recorded successfully`);
       setAmount("");

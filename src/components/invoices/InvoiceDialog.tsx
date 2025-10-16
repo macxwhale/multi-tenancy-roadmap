@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { useCreateNotification } from "@/hooks/useNotifications";
 import {
   Dialog,
   DialogContent,
@@ -57,6 +58,7 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
   const { data: nextInvoiceNumber } = useGenerateInvoiceNumber();
   const createInvoice = useCreateInvoice();
   const updateInvoice = useUpdateInvoice();
+  const createNotification = useCreateNotification();
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | undefined>(
     invoice?.product_id || undefined
@@ -152,6 +154,16 @@ export function InvoiceDialog({ open, onClose, invoice }: InvoiceDialogProps) {
         }
         
         toast.success("Invoice created successfully");
+        
+        // Create notification for new invoice
+        const selectedClient = clients.find(c => c.id === data.client_id);
+        createNotification.mutate({
+          title: 'New Invoice Created',
+          message: `Invoice ${invoiceData.invoice_number} for ${selectedClient?.name || 'client'} - KES ${parseFloat(data.amount).toLocaleString()}`,
+          type: 'invoice',
+          link: '/invoices',
+          read: false,
+        });
       }
 
       onClose();
