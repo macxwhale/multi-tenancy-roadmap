@@ -8,71 +8,71 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern Dashboard Colors - Sophisticated and Professional */
+    /* M-PESA & WhatsApp Inspired Brand Colors */
     --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Primary: Rich Blue - Modern and Engaging */
-    --primary: 221 83% 53%;
+    /* Primary: M-PESA/WhatsApp Green - Vibrant and Trustworthy */
+    --primary: 142 70% 49%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 221 83% 48%;
-    --primary-light: 221 83% 95%;
+    --primary-hover: 142 70% 44%;
+    --primary-light: 142 70% 95%;
     
-    /* Secondary: Sophisticated Purple */
-    --secondary: 262 52% 47%;
+    /* Secondary: M-PESA Red Accent */
+    --secondary: 6 78% 57%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 262 52% 95%;
+    --secondary-light: 6 78% 95%;
 
-    /* Muted: Refined Grays */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Muted: Clean Grays */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 46%;
 
-    /* Accent: Vibrant for CTAs */
-    --accent: 221 83% 53%;
+    /* Accent: Primary Green for CTAs */
+    --accent: 142 70% 49%;
     --accent-foreground: 0 0% 100%;
 
-    /* Destructive: Clear Warning Red */
-    --destructive: 0 84% 60%;
+    /* Destructive: M-PESA Red */
+    --destructive: 6 78% 57%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success: Fresh Green */
-    --success: 142 71% 45%;
+    /* Success: WhatsApp Green */
+    --success: 142 70% 49%;
     --success-foreground: 0 0% 100%;
-    --success-light: 142 71% 95%;
+    --success-light: 142 70% 95%;
 
     /* Warning: Warm Amber */
     --warning: 38 92% 50%;
-    --warning-foreground: 222 47% 11%;
+    --warning-foreground: 0 0% 15%;
     --warning-light: 38 92% 95%;
 
-    /* Info: Bright Cyan */
+    /* Info: Fresh Cyan */
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
     --info-light: 199 89% 95%;
 
-    /* Borders and inputs - Refined */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 221 83% 53%;
+    /* Borders and inputs - Clean */
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 142 70% 49%;
 
     /* Border radius - Modern approach */
     --radius: 0.75rem;
 
-    /* Sidebar - Dark modern with depth */
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
+    /* Sidebar - Dark with M-PESA Green Accents */
+    --sidebar-background: 0 0% 15%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 142 70% 49%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 32% 17%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 142 70% 49%;
 
     /* Enhanced Elevation System */
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -100,58 +100,58 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode - Rich and Modern */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Dark mode - M-PESA Inspired */
+    --background: 0 0% 11%;
+    --foreground: 0 0% 98%;
 
-    --card: 217 32% 17%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 17%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 217 32% 17%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 17%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 221 83% 53%;
+    --primary: 142 70% 49%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 221 83% 58%;
-    --primary-light: 221 83% 25%;
+    --primary-hover: 142 70% 54%;
+    --primary-light: 142 70% 25%;
 
-    --secondary: 262 52% 47%;
+    --secondary: 6 78% 57%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 262 52% 25%;
+    --secondary-light: 6 78% 25%;
 
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 0 0% 17%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 221 83% 53%;
+    --accent: 142 70% 49%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 6 78% 57%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 142 70% 49%;
     --success-foreground: 0 0% 100%;
-    --success-light: 142 71% 25%;
+    --success-light: 142 70% 25%;
 
     --warning: 38 92% 50%;
-    --warning-foreground: 222 47% 11%;
+    --warning-foreground: 0 0% 11%;
     --warning-light: 38 92% 25%;
 
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
     --info-light: 199 89% 25%;
 
-    --border: 217 32% 23%;
-    --input: 217 32% 23%;
-    --ring: 221 83% 53%;
+    --border: 0 0% 23%;
+    --input: 0 0% 23%;
+    --ring: 142 70% 49%;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-background: 0 0% 11%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 142 70% 49%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 32% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 32% 23%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 0 0% 17%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 23%;
+    --sidebar-ring: 142 70% 49%;
   }
 }
 
