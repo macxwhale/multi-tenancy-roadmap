@@ -52,13 +52,17 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0 bg-sidebar-background">
-      <div className="p-6 border-b border-sidebar-border/30">
-        {state === "expanded" && (
+      <div className={cn("p-6 border-b border-sidebar-border/30", state === "collapsed" && "flex justify-center")}>
+        {state === "expanded" ? (
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
               <LayoutDashboard className="h-5 w-5 text-white" />
             </div>
             <h1 className="text-xl font-bold text-sidebar-foreground tracking-tight">Dashbrd</h1>
+          </div>
+        ) : (
+          <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+            <LayoutDashboard className="h-5 w-5 text-white" />
           </div>
         )}
       </div>
@@ -90,7 +94,10 @@ export function AppSidebar() {
                       <SidebarMenuItem>
                         <button
                           onClick={() => setClientDialogOpen(true)}
-                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground w-full"
+                          className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground w-full",
+                            state === "collapsed" && "justify-center"
+                          )}
                         >
                           <Plus className="h-4 w-4 flex-shrink-0" />
                           {state === "expanded" && <span>Add Client</span>}
@@ -108,7 +115,8 @@ export function AppSidebar() {
                                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                                 isActive
                                   ? "bg-sidebar-accent text-sidebar-foreground"
-                                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+                                state === "collapsed" && "justify-center"
                               )
                             }
                           >
@@ -128,7 +136,10 @@ export function AppSidebar() {
 
       <div className="mt-auto p-3 border-t border-sidebar-border/30">
         <SidebarMenuButton asChild>
-          <button className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200">
+          <button className={cn(
+            "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200",
+            state === "collapsed" && "justify-center"
+          )}>
             <Settings className="h-4 w-4" />
             {state === "expanded" && <span>Settings</span>}
           </button>
