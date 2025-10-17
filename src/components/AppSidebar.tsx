@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { LayoutDashboard, Users, FileText, Package, ChevronRight, Settings } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Package, ChevronRight, Settings, Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { ClientDialog } from "@/components/clients/ClientDialog";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -26,9 +28,9 @@ const menuGroups = [
     ]
   },
   {
-    label: "Management",
+    label: "Client & Sales",
     items: [
-      { title: "Customers", url: "/clients", icon: Users },
+      { title: "Client List", url: "/clients", icon: Users },
       { title: "Invoices", url: "/invoices", icon: FileText },
       { title: "Products", url: "/products", icon: Package },
     ]
@@ -38,6 +40,7 @@ const menuGroups = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const [openGroups, setOpenGroups] = useState<string[]>(["Dashboards"]);
+  const [clientDialogOpen, setClientDialogOpen] = useState(false);
 
   const toggleGroup = (label: string) => {
     setOpenGroups(prev => 
@@ -104,6 +107,19 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
+                    {group.label === "Client & Sales" && (
+                      <SidebarMenuItem>
+                        <Button
+                          onClick={() => setClientDialogOpen(true)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start gap-2 mt-2"
+                        >
+                          <Plus className="h-4 w-4" />
+                          {state === "expanded" && <span>Add Client</span>}
+                        </Button>
+                      </SidebarMenuItem>
+                    )}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
@@ -120,6 +136,12 @@ export function AppSidebar() {
           </button>
         </SidebarMenuButton>
       </div>
+
+      <ClientDialog
+        open={clientDialogOpen}
+        onClose={() => setClientDialogOpen(false)}
+        client={null}
+      />
     </Sidebar>
   );
 }
