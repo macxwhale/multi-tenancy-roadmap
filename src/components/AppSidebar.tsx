@@ -86,6 +86,17 @@ export function AppSidebar() {
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu className="space-y-1">
+                    {group.label === "Client & Sales" && (
+                      <SidebarMenuItem>
+                        <button
+                          onClick={() => setClientDialogOpen(true)}
+                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground w-full"
+                        >
+                          <Plus className="h-4 w-4 flex-shrink-0" />
+                          {state === "expanded" && <span>Add Client</span>}
+                        </button>
+                      </SidebarMenuItem>
+                    )}
                     {group.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
@@ -107,19 +118,6 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
-                    {group.label === "Client & Sales" && (
-                      <SidebarMenuItem>
-                        <Button
-                          onClick={() => setClientDialogOpen(true)}
-                          variant="outline"
-                          size="sm"
-                          className="w-full justify-start gap-2 mt-2"
-                        >
-                          <Plus className="h-4 w-4" />
-                          {state === "expanded" && <span>Add Client</span>}
-                        </Button>
-                      </SidebarMenuItem>
-                    )}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
