@@ -64,14 +64,14 @@ All colors MUST be HSL.
     /* Border radius - Modern approach */
     --radius: 0.75rem;
 
-    /* Sidebar - Dark with M-PESA Green Accents */
-    --sidebar-background: 0 0% 15%;
-    --sidebar-foreground: 0 0% 98%;
+    /* Sidebar - Clean White with M-PESA Green Accents */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 15%;
     --sidebar-primary: 142 70% 49%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 25%;
+    --sidebar-accent: 142 70% 95%;
+    --sidebar-accent-foreground: 142 70% 30%;
+    --sidebar-border: 0 0% 91%;
     --sidebar-ring: 142 70% 49%;
 
     /* Enhanced Elevation System */
@@ -144,13 +144,13 @@ All colors MUST be HSL.
     --input: 0 0% 23%;
     --ring: 142 70% 49%;
 
-    --sidebar-background: 0 0% 11%;
-    --sidebar-foreground: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 15%;
     --sidebar-primary: 142 70% 49%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 17%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 23%;
+    --sidebar-accent: 142 70% 95%;
+    --sidebar-accent-foreground: 142 70% 30%;
+    --sidebar-border: 0 0% 91%;
     --sidebar-ring: 142 70% 49%;
   }
 }
