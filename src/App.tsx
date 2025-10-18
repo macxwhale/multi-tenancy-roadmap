@@ -10,14 +10,18 @@ import Invoices from "./pages/Invoices";
 import Products from "./pages/Products";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import ClientDashboard from "./pages/ClientDashboard";
 import { useAuth } from "./hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { useUserRole } from "./hooks/useUserRole";
+import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+function ProtectedRoute({ children, requireOwner = false }: { children: React.ReactNode; requireOwner?: boolean }) {
+  const { user, loading: authLoading } = useAuth();
+  const { role, isClient } = useUserRole();
+  const location = useLocation();
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -29,7 +33,36 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/auth" replace />;
   }
 
+  // Redirect clients to their dashboard if they try to access owner pages
+  if (requireOwner && isClient && location.pathname !== '/client-dashboard') {
+    return <Navigate to="/client-dashboard" replace />;
+  }
+
+  // Don't wrap client dashboard in Layout
+  if (location.pathname === '/client-dashboard') {
+    return <>{children}</>;
+  }
+
   return <Layout>{children}</Layout>;
+}
+
+function DashboardRouter() {
+  const { role } = useUserRole();
+  const { loading } = useAuth();
+
+  if (loading || !role) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (role === 'client') {
+    return <Navigate to="/client-dashboard" replace />;
+  }
+
+  return <Dashboard />;
 }
 
 const queryClient = new QueryClient();
@@ -46,14 +79,22 @@ const App = () => (
             path="/"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardRouter />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/client-dashboard"
+            element={
+              <ProtectedRoute>
+                <ClientDashboard />
               </ProtectedRoute>
             }
           />
           <Route
             path="/clients"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requireOwner>
                 <Clients />
               </ProtectedRoute>
             }
@@ -61,7 +102,7 @@ const App = () => (
           <Route
             path="/invoices"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requireOwner>
                 <Invoices />
               </ProtectedRoute>
             }
@@ -69,7 +110,7 @@ const App = () => (
           <Route
             path="/products"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requireOwner>
                 <Products />
               </ProtectedRoute>
             }
