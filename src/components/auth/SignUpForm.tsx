@@ -76,6 +76,10 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
         if (setupError) throw setupError;
 
         toast.success('Account created successfully!');
+        toast.info(`Password: ${data.password}`, {
+          duration: 10000,
+          description: 'Save this password - it will be used to login',
+        });
         onSuccess();
       }
     } catch (error: any) {
