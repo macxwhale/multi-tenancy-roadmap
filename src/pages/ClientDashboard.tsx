@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Calendar, Tag, User, Receipt } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ClientData {
   id: string;
@@ -25,11 +34,35 @@ interface Invoice {
   notes: string | null;
 }
 
+interface Transaction {
+  id: string;
+  amount: number;
+  type: string;
+  date: string;
+  notes: string | null;
+  invoice_id: string | null;
+}
+
+interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  product_id: string;
+  quantity: number;
+  price: number;
+  products?: {
+    name: string;
+  };
+}
+
 const ClientDashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -86,6 +119,51 @@ const ClientDashboard = () => {
     }
   };
 
+  const fetchInvoiceDetails = async (invoice: Invoice) => {
+    try {
+      // Fetch transactions for this invoice
+      const { data: txData, error: txError } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('invoice_id', invoice.id)
+        .order('date', { ascending: false });
+
+      if (txError) throw txError;
+      setTransactions(txData || []);
+
+      // In a real implementation, you'd have an invoice_items table
+      // For now, we'll use placeholder data
+      setInvoiceItems([]);
+      
+      setSelectedInvoice(invoice);
+      setIsDialogOpen(true);
+    } catch (error) {
+      console.error('Error fetching invoice details:', error);
+      toast.error('Failed to load transaction details');
+    }
+  };
+
+  const handleStatusChange = async (invoiceId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('invoices')
+        .update({ status: newStatus })
+        .eq('id', invoiceId);
+
+      if (error) throw error;
+
+      // Update local state
+      setInvoices(invoices.map(inv => 
+        inv.id === invoiceId ? { ...inv, status: newStatus } : inv
+      ));
+
+      toast.success('Invoice status updated');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -109,111 +187,195 @@ const ClientDashboard = () => {
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'bg-green-500';
-      case 'pending':
-        return 'bg-yellow-500';
-      case 'overdue':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
+  const calculateInvoiceBalance = (invoice: Invoice) => {
+    const paid = transactions
+      .filter(t => t.invoice_id === invoice.id && t.type === 'payment')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return Number(invoice.amount) - paid;
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">My Account</h1>
-          <p className="text-muted-foreground">Welcome, {clientData.name}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
+      <div className="container mx-auto max-w-4xl space-y-4">
+        {invoices.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Receipt className="h-16 w-16 text-muted-foreground mb-4" />
+              <p className="text-center text-muted-foreground text-lg">
+                No invoices found
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          invoices.map((invoice) => {
+            const balance = calculateInvoiceBalance(invoice);
+            return (
+              <Card 
+                key={invoice.id} 
+                className="bg-gradient-to-br from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground transition-all cursor-pointer"
+                onClick={() => fetchInvoiceDetails(invoice)}
+              >
+                <CardHeader className="space-y-4">
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    <Receipt className="h-5 w-5" />
+                    {clientData?.phone_number}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-yellow-500/20 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
+                      <div className="flex items-center gap-2 text-sm mb-1">
+                        <span className="text-yellow-300">💰</span>
+                        <span className="font-medium">Goal Amount</span>
+                      </div>
+                      <p className="text-2xl font-bold">{invoice.amount} Ksh</p>
+                    </div>
+
+                    <div className="bg-yellow-500/20 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
+                      <div className="flex items-center gap-2 text-sm mb-1">
+                        <span className="text-yellow-300">📊</span>
+                        <span className="font-medium">Goal Balance</span>
+                      </div>
+                      <p className="text-2xl font-bold">{balance} Ksh</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>Date</span>
+                      <span className="font-medium">
+                        {format(new Date(invoice.created_at), 'dd-MMM-yyyy')}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4" />
+                      <span>Tag</span>
+                      <span className="font-medium">{invoice.invoice_number}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span>Owner</span>
+                      <span className="font-medium">{clientData?.phone_number}</span>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <Select
+                    value={invoice.status}
+                    onValueChange={(value) => {
+                      handleStatusChange(invoice.id, value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-muted/20 border-primary-foreground/30 text-primary-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Invoice Pending</SelectItem>
+                      <SelectItem value="paid">Invoice Closed</SelectItem>
+                      <SelectItem value="overdue">Invoice Overdue</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Account Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Badge variant={clientData.status === 'active' ? 'default' : 'secondary'}>
-              {clientData.status}
-            </Badge>
-          </CardContent>
-        </Card>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-yellow-600">
+              <Receipt className="h-5 w-5" />
+              My Transactions
+            </DialogTitle>
+          </DialogHeader>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              KSh {clientData.total_balance.toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
+          <Tabs defaultValue="transactions" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="transactions">Transactions</TabsTrigger>
+              <TabsTrigger value="items">Invoice Items</TabsTrigger>
+            </TabsList>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Phone Number</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg">{clientData.phone_number}</p>
-          </CardContent>
-        </Card>
-      </div>
+            <TabsContent value="transactions" className="space-y-4">
+              {transactions.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">
+                  No transactions found
+                </p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                    <div className="text-center">
+                      <div className="text-sm text-muted-foreground mb-1">
+                        📊 Total
+                      </div>
+                      <p className="text-xl font-bold">
+                        {selectedInvoice?.amount} Ksh
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm text-muted-foreground mb-1">
+                        🟢 Balance
+                      </div>
+                      <p className="text-xl font-bold">
+                        {selectedInvoice && calculateInvoiceBalance(selectedInvoice)} Ksh
+                      </p>
+                    </div>
+                  </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>My Invoices</CardTitle>
-          <CardDescription>
-            View all your invoices and payment history
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {invoices.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
-              No invoices found
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Notes</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">
-                      {invoice.invoice_number}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(invoice.created_at), 'MMM dd, yyyy')}
-                    </TableCell>
-                    <TableCell>
-                      KSh {invoice.amount.toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(invoice.status)}>
-                        {invoice.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {invoice.notes || '-'}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+                  <div className="space-y-3">
+                    {transactions.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-500">✓</span>
+                          <span>{format(new Date(transaction.date), 'dd-MMM-yyyy')}</span>
+                        </div>
+                        <div className="flex items-center gap-2 font-bold text-green-600">
+                          <Receipt className="h-4 w-4" />
+                          {transaction.amount} Ksh
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="items" className="space-y-4">
+              {invoiceItems.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">
+                  No invoice items found
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {invoiceItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium">{item.products?.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Qty: {item.quantity} × {item.price} Ksh
+                        </p>
+                      </div>
+                      <p className="font-bold">
+                        {item.quantity * item.price} Ksh
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
