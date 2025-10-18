@@ -12,11 +12,12 @@ import { Loader2 } from 'lucide-react';
 const signUpSchema = z.object({
   businessName: z.string().min(2, 'Business name must be at least 2 characters'),
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
-  phoneNumber: z.string()
-    .length(10, 'Phone number must be exactly 10 digits')
-    .regex(/^[0-9]{10}$/, 'Phone number must contain only digits'),
-  email: z.string().email('Invalid email address'),
+  phoneNumber: z.string().regex(/^0\d{9}$/, 'Phone must be 10 digits starting with 0'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
@@ -34,8 +35,8 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
       businessName: '',
       fullName: '',
       phoneNumber: '',
-      email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
@@ -43,9 +44,12 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
     setIsLoading(true);
     try {
       const redirectUrl = `${window.location.origin}/`;
+      
+      // Convert phone number to email format for owner accounts
+      const email = `${data.phoneNumber}@owner.internal`;
 
       const { error: signUpError, data: authData } = await supabase.auth.signUp({
-        email: data.email,
+        email,
         password: data.password,
         options: {
           emailRedirectTo: redirectUrl,
@@ -120,24 +124,11 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="0712345678 (10 digits)" 
+                  type="tel"
+                  placeholder="0712345678" 
                   maxLength={10}
                   {...field} 
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="Enter your email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -152,6 +143,20 @@ export const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="Enter your password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Confirm your password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

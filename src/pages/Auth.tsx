@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SignUpForm } from '@/components/auth/SignUpForm';
-import { LoginForm } from '@/components/auth/LoginForm';
-import { ClientLoginForm } from '@/components/auth/ClientLoginForm';
+import { UnifiedLoginForm } from '@/components/auth/UnifiedLoginForm';
 import { useAuth } from '@/hooks/useAuth';
 
 const Auth = () => {
@@ -33,19 +32,15 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              <TabsTrigger value="client">Client</TabsTrigger>
             </TabsList>
             <TabsContent value="login" className="mt-6">
-              <LoginForm onSuccess={handleSuccess} />
+              <UnifiedLoginForm onSuccess={handleSuccess} />
             </TabsContent>
             <TabsContent value="signup" className="mt-6">
               <SignUpForm onSuccess={handleSuccess} />
-            </TabsContent>
-            <TabsContent value="client" className="mt-6">
-              <ClientLoginForm onSuccess={handleSuccess} />
             </TabsContent>
           </Tabs>
         </CardContent>
