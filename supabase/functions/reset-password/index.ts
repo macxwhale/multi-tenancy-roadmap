@@ -54,15 +54,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Check for client user
     const { data: clientUsers } = await supabaseAdmin.auth.admin.listUsers();
+    
+    console.log(`Looking for user with phone: ${phone_number}`);
+    console.log(`Client email: ${clientEmail}, Owner email: ${ownerEmail}`);
+    console.log(`Total users: ${clientUsers.users.length}`);
+    console.log(`All user emails:`, clientUsers.users.map(u => u.email));
+    
     const clientUser = clientUsers.users.find(u => u.email === clientEmail);
     
     if (clientUser) {
+      console.log(`Found client user: ${clientUser.id}`);
       userId = clientUser.id;
     } else {
       // Check for owner user
       const ownerUser = clientUsers.users.find(u => u.email === ownerEmail);
       if (ownerUser) {
+        console.log(`Found owner user: ${ownerUser.id}`);
         userId = ownerUser.id;
+      } else {
+        console.log(`No user found. Checked ${clientUsers.users.length} users`);
       }
     }
 
