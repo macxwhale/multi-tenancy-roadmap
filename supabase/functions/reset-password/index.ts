@@ -46,33 +46,34 @@ const handler = async (req: Request): Promise<Response> => {
 
     const newPin = generatePin();
 
-    // Try to find user with either client or owner email
-    const clientEmail = `${phone_number}@client.internal`;
-    const ownerEmail = `${phone_number}@owner.internal`;
-
     let userId: string | null = null;
 
-    // Check for client user
-    const { data: clientUsers } = await supabaseAdmin.auth.admin.listUsers();
-    
-    console.log(`Looking for user with phone: ${phone_number}`);
-    console.log(`Client email: ${clientEmail}, Owner email: ${ownerEmail}`);
-    console.log(`Total users: ${clientUsers.users.length}`);
-    console.log(`All user emails:`, clientUsers.users.map(u => u.email));
-    
-    const clientUser = clientUsers.users.find(u => u.email === clientEmail);
-    
-    if (clientUser) {
-      console.log(`Found client user: ${clientUser.id}`);
-      userId = clientUser.id;
+    // First, check profiles table for the phone number to get user_id
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('user_id')
+      .eq('phone_number', phone_number)
+      .single();
+
+    if (profile && !profileError) {
+      userId = profile.user_id;
+      console.log(`Found user via profile: ${userId}`);
     } else {
-      // Check for owner user
+      // Fallback: Try to find user with either client or owner email format
+      const clientEmail = `${phone_number}@client.internal`;
+      const ownerEmail = `${phone_number}@owner.internal`;
+      
+      const { data: clientUsers } = await supabaseAdmin.auth.admin.listUsers();
+      
+      const clientUser = clientUsers.users.find(u => u.email === clientEmail);
       const ownerUser = clientUsers.users.find(u => u.email === ownerEmail);
-      if (ownerUser) {
-        console.log(`Found owner user: ${ownerUser.id}`);
+      
+      if (clientUser) {
+        userId = clientUser.id;
+        console.log(`Found client user: ${userId}`);
+      } else if (ownerUser) {
         userId = ownerUser.id;
-      } else {
-        console.log(`No user found. Checked ${clientUsers.users.length} users`);
+        console.log(`Found owner user: ${userId}`);
       }
     }
 
