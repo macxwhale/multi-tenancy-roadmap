@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Calendar, Tag, User, Receipt } from 'lucide-react';
+import { Loader2, Calendar, Tag, User, Receipt, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   Select,
@@ -56,6 +57,7 @@ interface InvoiceItem {
 
 const ClientDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -164,6 +166,19 @@ const ClientDashboard = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast.success('Logged out successfully');
+      navigate('/auth', { replace: true });
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error('Failed to log out');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -197,6 +212,25 @@ const ClientDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
       <div className="container mx-auto max-w-4xl space-y-4">
+        {/* Header with Logout */}
+        <div className="sticky top-4 z-10 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-primary" />
+            <div>
+              <p className="font-semibold text-foreground">{clientData?.name || clientData?.phone_number}</p>
+              <p className="text-sm text-muted-foreground">{clientData?.phone_number}</p>
+            </div>
+          </div>
+          <Button 
+            onClick={handleLogout}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Log Out
+          </Button>
+        </div>
         {invoices.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
