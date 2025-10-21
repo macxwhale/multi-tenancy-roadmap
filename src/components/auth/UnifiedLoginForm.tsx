@@ -49,26 +49,35 @@ export const UnifiedLoginForm = ({ onSuccess }: UnifiedLoginFormProps) => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // Try client login first (phone@client.internal)
-      let email = `${data.phone_number}@client.internal`;
-      let { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: data.password,
+      // 1) Resolve the correct auth email for this phone number (owner/client)
+      const resolved = await supabase.functions.invoke('resolve-login-email', {
+        body: { phone_number: data.phone_number },
       });
 
-      // If client login fails, try owner login (phone@owner.internal)
-      if (error) {
-        email = `${data.phone_number}@owner.internal`;
-        const ownerResult = await supabase.auth.signInWithPassword({
+      const emails: string[] = [];
+      if (resolved.data?.email) emails.push(resolved.data.email);
+      // Fallbacks (deduped) in case resolution fails
+      const clientEmail = `${data.phone_number}@client.internal`;
+      const ownerEmail = `${data.phone_number}@owner.internal`;
+      for (const e of [clientEmail, ownerEmail]) {
+        if (!emails.includes(e)) emails.push(e);
+      }
+
+      let lastError: any = null;
+      for (const email of emails) {
+        const { error } = await supabase.auth.signInWithPassword({
           email,
           password: data.password,
         });
-        
-        if (ownerResult.error) throw ownerResult.error;
+        if (!error) {
+          toast.success('Logged in successfully!');
+          onSuccess();
+          return;
+        }
+        lastError = error;
       }
 
-      toast.success('Logged in successfully!');
-      onSuccess();
+      throw lastError || new Error('Login failed');
     } catch (error: any) {
       toast.error('Invalid phone number or password/PIN');
     } finally {

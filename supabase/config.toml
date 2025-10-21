@@ -2,3 +2,6 @@ project_id = "klhidaptujtjlqcxebnh"
 
 [functions.reset-password]
 verify_jwt = false
+
+[functions.resolve-login-email]
+verify_jwt = false
