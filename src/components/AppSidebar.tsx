@@ -3,6 +3,7 @@ import { LayoutDashboard, Users, FileText, Package, ChevronRight, Settings, Plus
 import { NavLink } from "react-router-dom";
 import { ClientDialog } from "@/components/clients/ClientDialog";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sidebar,
   SidebarContent,
@@ -38,9 +39,16 @@ const menuGroups = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
+  const isMobile = useIsMobile();
   const [openGroups, setOpenGroups] = useState<string[]>(["Dashboards"]);
   const [clientDialogOpen, setClientDialogOpen] = useState(false);
+
+  const handleMobileMenuClick = () => {
+    if (isMobile) {
+      setOpen(false);
+    }
+  };
 
   const toggleGroup = (label: string) => {
     setOpenGroups(prev => 
@@ -91,9 +99,12 @@ export function AppSidebar() {
                 <SidebarGroupContent>
                   <SidebarMenu className="space-y-1">
                     {group.label === "Client & Sales" && (
-                      <SidebarMenuItem>
+                        <SidebarMenuItem>
                         <button
-                          onClick={() => setClientDialogOpen(true)}
+                          onClick={() => {
+                            setClientDialogOpen(true);
+                            handleMobileMenuClick();
+                          }}
                           className={cn(
                             "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 bg-gradient-to-r from-primary/20 to-secondary/20 hover:from-primary/30 hover:to-secondary/30 text-sidebar-foreground w-full shadow-sm hover:shadow-md hover:scale-105",
                             state === "collapsed" && "justify-center"
@@ -118,6 +129,7 @@ export function AppSidebar() {
                             <NavLink
                               to={item.url}
                               end
+                              onClick={handleMobileMenuClick}
                               className={({ isActive }) =>
                                 cn(
                                   "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
@@ -145,7 +157,9 @@ export function AppSidebar() {
 
       <div className="mt-auto p-3 border-t border-sidebar-border/30">
         <SidebarMenuButton asChild>
-          <button className={cn(
+          <button 
+            onClick={handleMobileMenuClick}
+            className={cn(
             "w-full flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
             state === "collapsed" && "justify-center"
           )}>
