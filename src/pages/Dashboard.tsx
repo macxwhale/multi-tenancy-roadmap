@@ -102,7 +102,7 @@ export default function Dashboard() {
           onClick={() => navigate('/clients')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-primary/5 to-transparent">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Clients</CardTitle>
+            <CardTitle className="text-sm font-bold text-red-500">Total Clients</CardTitle>
             <div className="p-2 bg-primary/10 rounded-lg">
               <Users className="h-5 w-5 text-primary" />
             </div>
@@ -118,7 +118,7 @@ export default function Dashboard() {
           onClick={() => navigate('/invoices')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-info/5 to-transparent">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Invoices</CardTitle>
+            <CardTitle className="text-sm font-bold text-blue-500">Total Invoices</CardTitle>
             <div className="p-2 bg-info/10 rounded-lg">
               <FileText className="h-5 w-5 text-info" />
             </div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
 
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-warning/5 to-transparent">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Pending Amount</CardTitle>
+            <CardTitle className="text-sm font-bold text-yellow-500">Pending Amount</CardTitle>
             <div className="p-2 bg-warning/10 rounded-lg">
               <DollarSign className="h-5 w-5 text-warning" />
             </div>
@@ -146,7 +146,7 @@ export default function Dashboard() {
 
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-success/5 to-transparent">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-bold text-green-500">Total Revenue</CardTitle>
             <div className="p-2 bg-success/10 rounded-lg">
               <TrendingUp className="h-5 w-5 text-success" />
             </div>
