@@ -108,7 +108,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-3xl font-bold tracking-tight">{stats.totalClients}</div>
+            <div className="text-3xl font-extrabold tracking-tight text-red-500">{stats.totalClients}</div>
             <p className="text-sm text-muted-foreground mt-2">Active customer base</p>
           </CardContent>
         </Card>
@@ -124,7 +124,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-3xl font-bold tracking-tight">{stats.totalInvoices}</div>
+            <div className="text-3xl font-extrabold tracking-tight text-blue-500">{stats.totalInvoices}</div>
             <p className="text-sm text-muted-foreground mt-2">Invoices generated</p>
           </CardContent>
         </Card>
@@ -137,7 +137,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-3xl font-bold tracking-tight text-warning">
+            <div className="text-3xl font-extrabold tracking-tight text-yellow-500">
               KSH {stats.pendingAmount.toLocaleString()}
             </div>
             <p className="text-sm text-muted-foreground mt-2">Outstanding payments</p>
@@ -152,7 +152,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-3xl font-bold tracking-tight text-success">
+            <div className="text-3xl font-extrabold tracking-tight text-green-500">
               KSH {stats.totalRevenue.toLocaleString()}
             </div>
             <p className="text-sm text-muted-foreground mt-2">Total income received</p>
