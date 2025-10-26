@@ -55,14 +55,14 @@ export function AppSidebar() {
       <div className={cn("p-6 border-b border-sidebar-border/30", state === "collapsed" && "flex justify-center")}>
         {state === "expanded" ? (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-              <LayoutDashboard className="h-5 w-5 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
+              <LayoutDashboard className="h-7 w-7 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-sidebar-foreground tracking-tight">Dashbrd</h1>
+            <h1 className="text-2xl font-bold text-sidebar-foreground tracking-tight">Dashbrd</h1>
           </div>
         ) : (
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-            <LayoutDashboard className="h-5 w-5 text-white" />
+          <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
+            <LayoutDashboard className="h-7 w-7 text-white" />
           </div>
         )}
       </div>
@@ -95,37 +95,46 @@ export function AppSidebar() {
                         <button
                           onClick={() => setClientDialogOpen(true)}
                           className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground w-full",
+                            "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 bg-gradient-to-r from-primary/20 to-secondary/20 hover:from-primary/30 hover:to-secondary/30 text-sidebar-foreground w-full shadow-sm hover:shadow-md hover:scale-105",
                             state === "collapsed" && "justify-center"
                           )}
                         >
-                          <Plus className="h-4 w-4 flex-shrink-0" />
+                          <Plus className="h-6 w-6 flex-shrink-0 text-primary" />
                           {state === "expanded" && <span>Add Client</span>}
                         </button>
                       </SidebarMenuItem>
                     )}
-                    {group.items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <NavLink
-                            to={item.url}
-                            end
-                            className={({ isActive }) =>
-                              cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                                isActive
-                                  ? "bg-sidebar-accent text-sidebar-foreground"
-                                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
-                                state === "collapsed" && "justify-center"
-                              )
-                            }
-                          >
-                            <item.icon className="h-4 w-4 flex-shrink-0" />
-                            {state === "expanded" && <span>{item.title}</span>}
-                          </NavLink>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    {group.items.map((item, index) => {
+                      const colors = [
+                        "from-red-500/20 to-orange-500/20 hover:from-red-500/30 hover:to-orange-500/30",
+                        "from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30",
+                        "from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30",
+                      ];
+                      const iconColors = ["text-red-500", "text-blue-500", "text-purple-500"];
+                      
+                      return (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <NavLink
+                              to={item.url}
+                              end
+                              className={({ isActive }) =>
+                                cn(
+                                  "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
+                                  isActive
+                                    ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
+                                    : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
+                                  state === "collapsed" && "justify-center"
+                                )
+                              }
+                            >
+                              <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
+                              {state === "expanded" && <span>{item.title}</span>}
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
@@ -137,10 +146,10 @@ export function AppSidebar() {
       <div className="mt-auto p-3 border-t border-sidebar-border/30">
         <SidebarMenuButton asChild>
           <button className={cn(
-            "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200",
+            "w-full flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
             state === "collapsed" && "justify-center"
           )}>
-            <Settings className="h-4 w-4" />
+            <Settings className="h-6 w-6 text-green-500" />
             {state === "expanded" && <span>Settings</span>}
           </button>
         </SidebarMenuButton>
