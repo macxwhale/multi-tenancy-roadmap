@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Coins, TrendingUp, DollarSign, FileText } from "lucide-react";
+import { CalendarIcon, Coins, TrendingUp, Banknote, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -215,11 +215,14 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                     No unpaid invoices found
                   </div>
                 ) : (
-                  unpaidInvoices.map((invoice) => (
-                    <SelectItem key={invoice.id} value={invoice.id}>
-                      {invoice.invoice_number} - ksh {Number(invoice.amount).toLocaleString()} ({invoice.status})
-                    </SelectItem>
-                  ))
+                  unpaidInvoices.map((invoice) => {
+                    const productName = (invoice as any).products?.name || 'No Product';
+                    return (
+                      <SelectItem key={invoice.id} value={invoice.id}>
+                        {productName} - ksh {Number(invoice.amount).toLocaleString()} ({invoice.status})
+                      </SelectItem>
+                    );
+                  })
                 )}
               </SelectContent>
             </Select>
@@ -263,7 +266,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
 
           <div>
             <Label className="flex items-center gap-2 mb-2 font-medium text-sm sm:text-base">
-              <DollarSign className="h-4 w-4" />
+              <Banknote className="h-4 w-4" />
               Payment Amount
             </Label>
             <Input
