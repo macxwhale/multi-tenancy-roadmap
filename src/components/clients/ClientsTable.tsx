@@ -14,8 +14,23 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
     <>
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
-        {clients.map((client) => (
-          <div key={client.id} className="rounded-xl border border-border/40 bg-card shadow-sm p-4 space-y-3">
+        {clients.map((client, index) => {
+          const rainbowGradients = [
+            "from-red-500/10 to-orange-500/10 border-l-4 border-l-red-500",
+            "from-orange-500/10 to-yellow-500/10 border-l-4 border-l-orange-500",
+            "from-yellow-500/10 to-green-500/10 border-l-4 border-l-yellow-500",
+            "from-green-500/10 to-emerald-500/10 border-l-4 border-l-green-500",
+            "from-emerald-500/10 to-cyan-500/10 border-l-4 border-l-emerald-500",
+            "from-cyan-500/10 to-blue-500/10 border-l-4 border-l-cyan-500",
+            "from-blue-500/10 to-indigo-500/10 border-l-4 border-l-blue-500",
+            "from-indigo-500/10 to-purple-500/10 border-l-4 border-l-indigo-500",
+            "from-purple-500/10 to-pink-500/10 border-l-4 border-l-purple-500",
+            "from-pink-500/10 to-rose-500/10 border-l-4 border-l-pink-500",
+          ];
+          const gradientClass = rainbowGradients[index % rainbowGradients.length];
+          
+          return (
+          <div key={client.id} className={`rounded-xl border border-border/40 bg-gradient-to-r shadow-sm p-4 space-y-3 ${gradientClass}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="font-semibold text-sm text-foreground">
@@ -61,7 +76,8 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
               </div>
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
 
       {/* Desktop Table View */}
@@ -84,8 +100,8 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
             </TableRow>
           </TableHeader>
           <TableBody className="bg-card">
-            {clients.map((client) => (
-              <ClientRow key={client.id} client={client} onEdit={onEdit} onRefresh={onRefresh} />
+            {clients.map((client, index) => (
+              <ClientRow key={client.id} client={client} onEdit={onEdit} onRefresh={onRefresh} rowIndex={index} />
             ))}
           </TableBody>
         </Table>

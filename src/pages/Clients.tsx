@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, Users, Search } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ClientsTable } from "@/components/clients/ClientsTable";
 import { ClientDialog } from "@/components/clients/ClientDialog";
@@ -14,6 +15,7 @@ export default function Clients() {
   const { data: clients = [], isLoading: loading, refetch } = useClients();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleEdit = (client: ClientWithDetails) => {
     setEditingClient(client);
@@ -25,6 +27,17 @@ export default function Clients() {
     setEditingClient(null);
     refetch();
   };
+
+  const filteredClients = useMemo(() => {
+    if (!searchQuery.trim()) return clients;
+    
+    const query = searchQuery.toLowerCase();
+    return clients.filter(client => 
+      client.name?.toLowerCase().includes(query) ||
+      client.phone_number?.toLowerCase().includes(query) ||
+      client.email?.toLowerCase().includes(query)
+    );
+  }, [clients, searchQuery]);
 
   if (loading) {
     return (
@@ -62,6 +75,18 @@ export default function Clients() {
         </Button>
       </div>
 
+      {clients.length > 0 && (
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, phone, or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 h-11"
+          />
+        </div>
+      )}
+
       {clients.length === 0 ? (
         <EmptyState
           icon={Users}
@@ -72,8 +97,12 @@ export default function Clients() {
             onClick: () => setDialogOpen(true),
           }}
         />
+      ) : filteredClients.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          No clients found matching "{searchQuery}"
+        </div>
       ) : (
-        <ClientsTable clients={clients} onEdit={handleEdit} onRefresh={() => refetch()} />
+        <ClientsTable clients={filteredClients} onEdit={handleEdit} onRefresh={() => refetch()} />
       )}
       <ClientDialog
         open={dialogOpen}
