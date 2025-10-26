@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Users, FileText, DollarSign, TrendingUp, MapPin } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalClients: 0,
     totalInvoices: 0,
@@ -95,7 +97,10 @@ export default function Dashboard() {
       </div>
       
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="overflow-hidden">
+        <Card 
+          className="overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+          onClick={() => navigate('/clients')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-primary/5 to-transparent">
             <CardTitle className="text-sm font-semibold text-muted-foreground">Total Clients</CardTitle>
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -108,7 +113,10 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden">
+        <Card 
+          className="overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:scale-105"
+          onClick={() => navigate('/invoices')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-br from-info/5 to-transparent">
             <CardTitle className="text-sm font-semibold text-muted-foreground">Total Invoices</CardTitle>
             <div className="p-2 bg-info/10 rounded-lg">
