@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, UserRound } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,11 +37,6 @@ export function Layout({ children }: LayoutProps) {
     return user.user_metadata?.full_name || user.email?.split('@')[0] || "User";
   };
 
-  const getUserInitials = () => {
-    const name = getUserName();
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
-
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -71,8 +66,8 @@ export function Layout({ children }: LayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 hover:bg-accent/50">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xs">
-                        {getUserInitials()}
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white">
+                        <UserRound className="h-5 w-5" />
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium hidden md:inline-block">{getUserName()}</span>
