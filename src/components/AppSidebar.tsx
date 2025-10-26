@@ -58,7 +58,7 @@ export function AppSidebar() {
             <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
               <LayoutDashboard className="h-7 w-7 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-sidebar-foreground tracking-tight">Dashbrd</h1>
+            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight">Dashboard</h1>
           </div>
         ) : (
           <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
