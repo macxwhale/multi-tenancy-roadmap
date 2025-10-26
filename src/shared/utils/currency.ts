@@ -1,9 +1,9 @@
 /**
- * Format a number as currency (KSH)
+ * Format a number as currency (ksh)
  */
 export const formatCurrency = (amount: number | string): string => {
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-  return `KSH ${numAmount.toLocaleString()}`;
+  return `ksh ${numAmount.toLocaleString()}`;
 };
 
 /**
