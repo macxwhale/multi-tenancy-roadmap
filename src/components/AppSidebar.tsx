@@ -127,25 +127,23 @@ export function AppSidebar() {
                       
                       return (
                         <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton asChild>
-                            <NavLink
-                              to={item.url}
-                              end
-                              onClick={handleMobileMenuClick}
-                              className={({ isActive }) =>
-                                cn(
-                                  "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
-                                  isActive
-                                    ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
-                                    : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
-                                  !showText && "justify-center"
-                                )
-                              }
-                            >
-                              <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
-                              {showText && <span>{item.title}</span>}
-                            </NavLink>
-                          </SidebarMenuButton>
+                          <NavLink
+                            to={item.url}
+                            end
+                            onClick={handleMobileMenuClick}
+                            className={({ isActive }) =>
+                              cn(
+                                "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
+                                isActive
+                                  ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
+                                  : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
+                                !showText && "justify-center"
+                              )
+                            }
+                          >
+                            <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
+                            {showText && <span>{item.title}</span>}
+                          </NavLink>
                         </SidebarMenuItem>
                       );
                     })}
@@ -158,17 +156,15 @@ export function AppSidebar() {
       </SidebarContent>
 
       <div className="mt-auto p-3 border-t border-sidebar-border/30">
-        <SidebarMenuButton asChild>
-          <button 
-            onClick={handleMobileMenuClick}
-            className={cn(
-            "w-full flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
-            !showText && "justify-center"
-          )}>
-            <Settings className="h-6 w-6 text-green-500" />
-            {showText && <span>Settings</span>}
-          </button>
-        </SidebarMenuButton>
+        <button 
+          onClick={handleMobileMenuClick}
+          className={cn(
+          "w-full flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
+          !showText && "justify-center"
+        )}>
+          <Settings className="h-6 w-6 text-green-500" />
+          {showText && <span>Settings</span>}
+        </button>
       </div>
 
       <ClientDialog
