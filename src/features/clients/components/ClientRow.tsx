@@ -51,11 +51,13 @@ export function ClientRow({ client, onEdit, onRefresh, mobileActions, rowIndex =
     <TableRow className={`group bg-gradient-to-r transition-all duration-300 border-b border-border/30 ${gradientClass}`}>
       <TableCell className="py-4">
         <div>
-          <div className="font-semibold text-sm text-foreground flex items-center gap-2">
-            <UserRound className={`h-4 w-4 ${iconColor}`} />
-            {client.phone_number || client.name}
+          <div className="flex items-center gap-2">
+            <UserRound className={`h-5 w-5 ${iconColor}`} />
+            <span className={`font-bold text-base ${iconColor} tracking-wide`}>
+              {client.phone_number || client.name}
+            </span>
           </div>
-          <div className="text-xs text-muted-foreground mt-0.5">
+          <div className="text-xs text-muted-foreground mt-1 ml-7">
             Joined {formatDate(client.created_at)}
           </div>
         </div>

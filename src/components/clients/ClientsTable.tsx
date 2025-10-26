@@ -47,11 +47,13 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
           <div key={client.id} className={`rounded-xl border border-border/40 bg-gradient-to-r shadow-sm p-4 space-y-3 ${gradientClass}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="font-semibold text-sm text-foreground flex items-center gap-2">
-                  <UserRound className={`h-4 w-4 ${iconColor}`} />
-                  {client.phone_number || client.name}
+                <div className="flex items-center gap-2">
+                  <UserRound className={`h-5 w-5 ${iconColor}`} />
+                  <span className={`font-bold text-base ${iconColor} tracking-wide`}>
+                    {client.phone_number || client.name}
+                  </span>
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5">
+                <div className="text-xs text-muted-foreground mt-1 ml-7">
                   Joined {new Date(client.created_at).toLocaleDateString()}
                 </div>
               </div>
@@ -99,17 +101,17 @@ export function ClientsTable({ clients, onEdit, onRefresh }: ClientsTableProps) 
       <div className="hidden md:block rounded-xl border border-border/40 overflow-hidden bg-card shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/30">
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+            <TableRow className="bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 hover:from-primary/30 hover:via-accent/30 hover:to-primary/30 border-b-2 border-primary/40">
+              <TableHead className="font-bold text-sm tracking-wide h-12 text-primary">
                 CLIENT
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="font-bold text-sm tracking-wide h-12 text-accent">
                 FINANCIAL SUMMARY
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="font-bold text-sm tracking-wide h-12 text-primary">
                 STATUS
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11 text-right">
+              <TableHead className="font-bold text-sm tracking-wide h-12 text-right text-accent">
                 ACTIONS
               </TableHead>
             </TableRow>
