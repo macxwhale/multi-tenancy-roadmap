@@ -47,7 +47,7 @@ export function AppSidebar() {
   const showText = state === "expanded" || (isMobile && open);
 
   const handleMobileMenuClick = () => {
-    if (isMobile) {
+    if (isMobile && open) {
       setOpen(false);
     }
   };
@@ -127,23 +127,25 @@ export function AppSidebar() {
                       
                       return (
                         <SidebarMenuItem key={item.title}>
-                          <NavLink
-                            to={item.url}
-                            end
-                            onClick={handleMobileMenuClick}
-                            className={({ isActive }) =>
-                              cn(
-                                "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
-                                isActive
-                                  ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
-                                  : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
-                                !showText && "justify-center"
-                              )
-                            }
-                          >
-                            <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
-                            {showText && <span>{item.title}</span>}
-                          </NavLink>
+                          <SidebarMenuButton asChild>
+                            <NavLink
+                              to={item.url}
+                              end
+                              onClick={handleMobileMenuClick}
+                              className={({ isActive }) =>
+                                cn(
+                                  "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 shadow-sm",
+                                  isActive
+                                    ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
+                                    : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
+                                  !showText && "justify-center"
+                                )
+                              }
+                            >
+                              <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
+                              {showText && <span>{item.title}</span>}
+                            </NavLink>
+                          </SidebarMenuButton>
                         </SidebarMenuItem>
                       );
                     })}
