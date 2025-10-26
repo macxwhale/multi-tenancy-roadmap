@@ -39,10 +39,12 @@ const menuGroups = [
 ];
 
 export function AppSidebar() {
-  const { state, setOpen } = useSidebar();
+  const { state, setOpen, open } = useSidebar();
   const isMobile = useIsMobile();
   const [openGroups, setOpenGroups] = useState<string[]>(["Dashboards"]);
   const [clientDialogOpen, setClientDialogOpen] = useState(false);
+  
+  const showText = state === "expanded" || (isMobile && open);
 
   const handleMobileMenuClick = () => {
     if (isMobile) {
@@ -60,8 +62,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0 bg-sidebar-background">
-      <div className={cn("p-6 border-b border-sidebar-border/30", state === "collapsed" && "flex justify-center")}>
-        {state === "expanded" ? (
+      <div className={cn("p-6 border-b border-sidebar-border/30", !showText && "flex justify-center")}>
+        {showText ? (
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
               <LayoutDashboard className="h-7 w-7 text-white" />
@@ -86,8 +88,8 @@ export function AppSidebar() {
             <SidebarGroup>
               <CollapsibleTrigger className="w-full group/collapsible">
                 <SidebarGroupLabel className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-3 mb-2 flex items-center justify-between hover:text-sidebar-foreground/80 transition-colors cursor-pointer">
-                  <span>{state === "expanded" ? group.label : ""}</span>
-                  {state === "expanded" && (
+                  <span>{showText ? group.label : ""}</span>
+                  {showText && (
                     <ChevronRight className={cn(
                       "h-4 w-4 transition-transform duration-200",
                       openGroups.includes(group.label) && "rotate-90"
@@ -107,11 +109,11 @@ export function AppSidebar() {
                           }}
                           className={cn(
                             "flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold transition-all duration-200 bg-gradient-to-r from-primary/20 to-secondary/20 hover:from-primary/30 hover:to-secondary/30 text-sidebar-foreground w-full shadow-sm hover:shadow-md hover:scale-105",
-                            state === "collapsed" && "justify-center"
+                            !showText && "justify-center"
                           )}
                         >
                           <Plus className="h-6 w-6 flex-shrink-0 text-primary" />
-                          {state === "expanded" && <span>Add Client</span>}
+                          {showText && <span>Add Client</span>}
                         </button>
                       </SidebarMenuItem>
                     )}
@@ -136,12 +138,12 @@ export function AppSidebar() {
                                   isActive
                                     ? `bg-gradient-to-r ${colors[index % colors.length]} scale-105 shadow-md`
                                     : `hover:bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105`,
-                                  state === "collapsed" && "justify-center"
+                                  !showText && "justify-center"
                                 )
                               }
                             >
                               <item.icon className={cn("h-6 w-6 flex-shrink-0", iconColors[index % iconColors.length])} />
-                              {state === "expanded" && <span>{item.title}</span>}
+                              {showText && <span>{item.title}</span>}
                             </NavLink>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -161,10 +163,10 @@ export function AppSidebar() {
             onClick={handleMobileMenuClick}
             className={cn(
             "w-full flex items-center gap-4 rounded-xl px-4 py-4 text-base font-semibold bg-gradient-to-r from-green-500/20 to-teal-500/20 hover:from-green-500/30 hover:to-teal-500/30 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105",
-            state === "collapsed" && "justify-center"
+            !showText && "justify-center"
           )}>
             <Settings className="h-6 w-6 text-green-500" />
-            {state === "expanded" && <span>Settings</span>}
+            {showText && <span>Settings</span>}
           </button>
         </SidebarMenuButton>
       </div>
