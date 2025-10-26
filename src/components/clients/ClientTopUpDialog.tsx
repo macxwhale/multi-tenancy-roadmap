@@ -216,9 +216,10 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                   </div>
                 ) : (
                   unpaidInvoices.map((invoice) => {
-                    const productName = (invoice as any).products?.name || 'No Product';
+                    const invoiceWithProduct = invoice as any;
+                    const productName = invoiceWithProduct.products?.name || invoiceWithProduct.invoice_number || 'Unnamed Invoice';
                     return (
-                      <SelectItem key={invoice.id} value={invoice.id}>
+                      <SelectItem key={invoice.id} value={invoice.id} className="bg-popover">
                         {productName} - ksh {Number(invoice.amount).toLocaleString()} ({invoice.status})
                       </SelectItem>
                     );
