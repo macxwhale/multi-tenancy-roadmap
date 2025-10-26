@@ -13,7 +13,8 @@ export const useUserRole = () => {
       return;
     }
 
-    if (user.email.endsWith('@owner.internal')) {
+    if (user.email.endsWith('@owner.internal') || !user.email.endsWith('@client.internal')) {
+      // If email doesn't end with @client.internal, assume owner
       setRole('owner');
     } else if (user.email.endsWith('@client.internal')) {
       setRole('client');
