@@ -141,13 +141,13 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
       // Create notification for payment
       createNotification.mutate({
         title: 'Payment Received',
-        message: `Payment of KES ${paymentAmount.toLocaleString()} received from ${client.name} for Invoice ${selectedInvoice?.invoice_number}`,
+        message: `Payment of ksh ${paymentAmount.toLocaleString()} received from ${client.name} for Invoice ${selectedInvoice?.invoice_number}`,
         type: 'payment',
         link: '/clients',
         read: false,
       });
 
-      toast.success(`Payment of KSH ${paymentAmount.toLocaleString()} recorded successfully`);
+      toast.success(`Payment of ksh ${paymentAmount.toLocaleString()} recorded successfully`);
       setAmount("");
       setDate(new Date());
       setSelectedInvoiceId("");
@@ -183,7 +183,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <div className="flex items-center gap-2 mb-2">
                   <Coins className="h-4 sm:h-5 w-4 sm:w-5 text-warning" />
                   <span className="font-semibold text-base sm:text-lg">
-                    KSH {client.totalInvoiced.toLocaleString()}
+                    ksh {client.totalInvoiced.toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Total Invoiced</div>
@@ -192,7 +192,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-destructive" />
                   <span className="font-semibold text-base sm:text-lg">
-                    KSH {(client.totalInvoiced - client.totalPaid).toLocaleString()}
+                    ksh {(client.totalInvoiced - client.totalPaid).toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Outstanding Balance</div>
@@ -217,7 +217,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 ) : (
                   unpaidInvoices.map((invoice) => (
                     <SelectItem key={invoice.id} value={invoice.id}>
-                      {invoice.invoice_number} - KSH {Number(invoice.amount).toLocaleString()} ({invoice.status})
+                      {invoice.invoice_number} - ksh {Number(invoice.amount).toLocaleString()} ({invoice.status})
                     </SelectItem>
                   ))
                 )}
@@ -226,7 +226,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             {selectedInvoice && (
               <div className="mt-2 p-3 border border-accent/30 rounded-lg bg-accent/5">
                 <p className="text-xs text-muted-foreground mb-1">Outstanding balance for this invoice:</p>
-                <p className="font-semibold text-base">KSH {invoiceBalance.toLocaleString()}</p>
+                <p className="font-semibold text-base">ksh {invoiceBalance.toLocaleString()}</p>
               </div>
             )}
           </div>
@@ -268,7 +268,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             </Label>
             <Input
               type="number"
-              placeholder="Enter payment amount in KSH"
+              placeholder="Enter payment amount in ksh"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full h-11 sm:h-10 text-base"
