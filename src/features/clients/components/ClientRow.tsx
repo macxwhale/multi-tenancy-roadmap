@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, UserRound } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ClientActions } from "./ClientActions";
 import { formatDate, formatCurrency } from "@/shared/utils";
@@ -26,18 +26,33 @@ const rainbowGradients = [
   "from-pink-500/10 to-rose-500/10 hover:from-pink-500/20 hover:to-rose-500/20 border-l-4 border-l-pink-500",
 ];
 
+const rainbowIconColors = [
+  "text-red-500",
+  "text-orange-500",
+  "text-yellow-500",
+  "text-green-500",
+  "text-emerald-500",
+  "text-cyan-500",
+  "text-blue-500",
+  "text-indigo-500",
+  "text-purple-500",
+  "text-pink-500",
+];
+
 export function ClientRow({ client, onEdit, onRefresh, mobileActions, rowIndex = 0 }: ClientRowProps) {
   if (mobileActions) {
     return <ClientActions client={client} onEdit={onEdit} onRefresh={onRefresh} />;
   }
 
   const gradientClass = rainbowGradients[rowIndex % rainbowGradients.length];
+  const iconColor = rainbowIconColors[rowIndex % rainbowIconColors.length];
 
   return (
     <TableRow className={`group bg-gradient-to-r transition-all duration-300 border-b border-border/30 ${gradientClass}`}>
       <TableCell className="py-4">
         <div>
-          <div className="font-semibold text-sm text-foreground">
+          <div className="font-semibold text-sm text-foreground flex items-center gap-2">
+            <UserRound className={`h-4 w-4 ${iconColor}`} />
             {client.phone_number || client.name}
           </div>
           <div className="text-xs text-muted-foreground mt-0.5">
