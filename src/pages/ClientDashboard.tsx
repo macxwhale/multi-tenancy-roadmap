@@ -6,17 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Calendar, Tag, User, Receipt, LogOut } from 'lucide-react';
+import { Loader2, Calendar, Tag, User, Receipt, LogOut, ArrowUpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { ClientTopUpDialog } from '@/components/clients/ClientTopUpDialog';
+import type { ClientWithDetails } from '@/api/clients.api';
 
 interface ClientData {
   id: string;
@@ -65,6 +60,7 @@ const ClientDashboard = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -145,25 +141,8 @@ const ClientDashboard = () => {
     }
   };
 
-  const handleStatusChange = async (invoiceId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from('invoices')
-        .update({ status: newStatus })
-        .eq('id', invoiceId);
-
-      if (error) throw error;
-
-      // Update local state
-      setInvoices(invoices.map(inv => 
-        inv.id === invoiceId ? { ...inv, status: newStatus } : inv
-      ));
-
-      toast.success('Invoice status updated');
-    } catch (error) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status');
-    }
+  const handleTopUpClick = () => {
+    setTopUpDialogOpen(true);
   };
 
   const handleLogout = async () => {
@@ -246,8 +225,7 @@ const ClientDashboard = () => {
             return (
               <Card 
                 key={invoice.id} 
-                className="bg-gradient-to-br from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground transition-all cursor-pointer"
-                onClick={() => fetchInvoiceDetails(invoice)}
+                className="bg-gradient-to-br from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground transition-all"
               >
                 <CardHeader className="space-y-4">
                   <div className="flex items-center gap-2 text-lg font-semibold">
@@ -296,22 +274,22 @@ const ClientDashboard = () => {
                   </div>
                 </CardHeader>
 
-                <CardContent>
-                  <Select
-                    value={invoice.status}
-                    onValueChange={(value) => {
-                      handleStatusChange(invoice.id, value);
-                    }}
+                <CardContent className="flex gap-2">
+                  <Button
+                    onClick={handleTopUpClick}
+                    className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground gap-2"
                   >
-                    <SelectTrigger className="w-full bg-muted/20 border-primary-foreground/30 text-primary-foreground">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Invoice Pending</SelectItem>
-                      <SelectItem value="paid">Invoice Closed</SelectItem>
-                      <SelectItem value="overdue">Invoice Overdue</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <ArrowUpCircle className="h-4 w-4" />
+                    Top Up
+                  </Button>
+                  <Button
+                    onClick={() => fetchInvoiceDetails(invoice)}
+                    variant="outline"
+                    className="flex-1 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                  >
+                    <Receipt className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
                 </CardContent>
               </Card>
             );
@@ -410,6 +388,15 @@ const ClientDashboard = () => {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      <ClientTopUpDialog
+        open={topUpDialogOpen}
+        onClose={() => {
+          setTopUpDialogOpen(false);
+          fetchClientData();
+        }}
+        client={clientData as ClientWithDetails}
+      />
     </div>
   );
 };
