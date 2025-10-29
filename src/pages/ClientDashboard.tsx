@@ -13,6 +13,26 @@ import { format } from 'date-fns';
 import { ClientTopUpDialog } from '@/components/clients/ClientTopUpDialog';
 import type { ClientWithDetails } from '@/api/clients.api';
 
+// Rainbow gradients for invoice cards
+const rainbowGradients = [
+  'from-pink-500/90 via-purple-500/90 to-indigo-500/90',
+  'from-blue-500/90 via-cyan-500/90 to-teal-500/90',
+  'from-green-500/90 via-emerald-500/90 to-lime-500/90',
+  'from-yellow-500/90 via-orange-500/90 to-red-500/90',
+  'from-rose-500/90 via-pink-500/90 to-fuchsia-500/90',
+  'from-violet-500/90 via-purple-500/90 to-pink-500/90',
+];
+
+// Rainbow colors for stat boxes
+const rainbowStatColors = [
+  'bg-pink-500/20 border-pink-400/40',
+  'bg-blue-500/20 border-blue-400/40',
+  'bg-green-500/20 border-green-400/40',
+  'bg-yellow-500/20 border-yellow-400/40',
+  'bg-rose-500/20 border-rose-400/40',
+  'bg-violet-500/20 border-violet-400/40',
+];
+
 interface ClientData {
   id: string;
   name: string;
@@ -220,12 +240,15 @@ const ClientDashboard = () => {
             </CardContent>
           </Card>
         ) : (
-          invoices.map((invoice) => {
+          invoices.map((invoice, index) => {
             const balance = calculateInvoiceBalance(invoice);
+            const gradientClass = rainbowGradients[index % rainbowGradients.length];
+            const statColorClass = rainbowStatColors[index % rainbowStatColors.length];
+            
             return (
               <Card 
                 key={invoice.id} 
-                className="bg-gradient-to-br from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground transition-all"
+                className={`bg-gradient-to-br ${gradientClass} hover:scale-[1.02] text-white transition-all duration-300 shadow-lg hover:shadow-xl`}
               >
                 <CardHeader className="space-y-4">
                   <div className="flex items-center gap-2 text-lg font-semibold">
@@ -234,17 +257,17 @@ const ClientDashboard = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-yellow-500/20 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
+                    <div className={`${statColorClass} backdrop-blur-sm rounded-lg p-3 border transition-all hover:scale-105`}>
                       <div className="flex items-center gap-2 text-sm mb-1">
-                        <span className="text-yellow-300">💰</span>
+                        <span className="text-2xl">💰</span>
                         <span className="font-medium">Goal Amount</span>
                       </div>
                       <p className="text-2xl font-bold">{invoice.amount} Ksh</p>
                     </div>
 
-                    <div className="bg-yellow-500/20 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
+                    <div className={`${statColorClass} backdrop-blur-sm rounded-lg p-3 border transition-all hover:scale-105`}>
                       <div className="flex items-center gap-2 text-sm mb-1">
-                        <span className="text-yellow-300">📊</span>
+                        <span className="text-2xl">📊</span>
                         <span className="font-medium">Goal Balance</span>
                       </div>
                       <p className="text-2xl font-bold">{balance} Ksh</p>
@@ -277,7 +300,7 @@ const ClientDashboard = () => {
                 <CardContent className="flex gap-2">
                   <Button
                     onClick={handleTopUpClick}
-                    className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground gap-2"
+                    className="flex-1 bg-white/20 hover:bg-white/30 text-white gap-2 border border-white/30 transition-all hover:scale-105"
                   >
                     <ArrowUpCircle className="h-4 w-4" />
                     Top Up
@@ -285,7 +308,7 @@ const ClientDashboard = () => {
                   <Button
                     onClick={() => fetchInvoiceDetails(invoice)}
                     variant="outline"
-                    className="flex-1 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                    className="flex-1 border-white/30 text-white hover:bg-white/20 transition-all hover:scale-105"
                   >
                     <Receipt className="h-4 w-4 mr-2" />
                     View Details
