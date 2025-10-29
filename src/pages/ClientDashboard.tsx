@@ -209,201 +209,293 @@ const ClientDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
-      <div className="container mx-auto max-w-4xl space-y-4">
-        {/* Header with Logout */}
-        <div className="sticky top-4 z-10 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary" />
-            <div>
-              <p className="font-semibold text-foreground">{clientData?.name || clientData?.phone_number}</p>
-              <p className="text-sm text-muted-foreground">{clientData?.phone_number}</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10">
+                <User className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-foreground">
+                  {clientData?.name || 'My Account'}
+                </h2>
+                <p className="text-sm text-muted-foreground">{clientData?.phone_number}</p>
+              </div>
             </div>
+            <Button 
+              onClick={handleLogout}
+              variant="ghost"
+              size="sm"
+              className="gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Log Out</span>
+            </Button>
           </div>
-          <Button 
-            onClick={handleLogout}
-            variant="outline"
-            size="sm"
-            className="gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Log Out
-          </Button>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight mb-2">My Invoices</h1>
+          <p className="text-muted-foreground">Track and manage your payment goals</p>
+        </div>
+
+        {/* Invoices Grid */}
         {invoices.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Receipt className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className="text-center text-muted-foreground text-lg">
-                No invoices found
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted mb-4">
+                <Receipt className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">No Invoices Yet</h3>
+              <p className="text-center text-muted-foreground max-w-sm">
+                You don't have any invoices at the moment. Check back later for updates.
               </p>
             </CardContent>
           </Card>
         ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">{
           invoices.map((invoice, index) => {
             const balance = calculateInvoiceBalance(invoice);
             const gradientClass = rainbowGradients[index % rainbowGradients.length];
             const statColorClass = rainbowStatColors[index % rainbowStatColors.length];
+            const percentagePaid = invoice.amount > 0 
+              ? ((invoice.amount - balance) / invoice.amount * 100).toFixed(0)
+              : 0;
             
             return (
               <Card 
                 key={invoice.id} 
-                className={`bg-gradient-to-br ${gradientClass} hover:scale-[1.02] text-white transition-all duration-300 shadow-lg hover:shadow-xl`}
+                className={`group overflow-hidden bg-gradient-to-br ${gradientClass} hover:scale-[1.02] text-white transition-all duration-300 shadow-lg hover:shadow-2xl border-0`}
               >
-                <CardHeader className="space-y-4">
-                  <div className="flex items-center gap-2 text-lg font-semibold">
-                    <Receipt className="h-5 w-5" />
-                    {clientData?.phone_number}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className={`${statColorClass} backdrop-blur-sm rounded-lg p-3 border transition-all hover:scale-105`}>
-                      <div className="flex items-center gap-2 text-sm mb-1">
-                        <span className="text-2xl">💰</span>
-                        <span className="font-medium">Goal Amount</span>
-                      </div>
-                      <p className="text-2xl font-bold">{invoice.amount} Ksh</p>
-                    </div>
-
-                    <div className={`${statColorClass} backdrop-blur-sm rounded-lg p-3 border transition-all hover:scale-105`}>
-                      <div className="flex items-center gap-2 text-sm mb-1">
-                        <span className="text-2xl">📊</span>
-                        <span className="font-medium">Goal Balance</span>
-                      </div>
-                      <p className="text-2xl font-bold">{balance} Ksh</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-sm">
+                <CardHeader className="pb-4">
+                  {/* Header with Invoice Number */}
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>Date</span>
+                      <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                        <Receipt className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium opacity-90">Invoice</p>
+                        <p className="text-sm font-semibold">{invoice.invoice_number}</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+                      {percentagePaid}% Paid
+                    </Badge>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className={`${statColorClass} backdrop-blur-sm rounded-xl p-4 border transition-all hover:scale-105`}>
+                      <p className="text-xs font-medium opacity-90 mb-2">Goal Amount</p>
+                      <p className="text-2xl font-bold tracking-tight">
+                        {invoice.amount.toLocaleString()} <span className="text-base">Ksh</span>
+                      </p>
+                    </div>
+
+                    <div className={`${statColorClass} backdrop-blur-sm rounded-xl p-4 border transition-all hover:scale-105`}>
+                      <p className="text-xs font-medium opacity-90 mb-2">Remaining</p>
+                      <p className="text-2xl font-bold tracking-tight">
+                        {balance.toLocaleString()} <span className="text-base">Ksh</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="space-y-2.5 text-sm bg-black/10 rounded-lg p-3 backdrop-blur-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 opacity-90">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>Created</span>
+                      </div>
                       <span className="font-medium">
-                        {format(new Date(invoice.created_at), 'dd-MMM-yyyy')}
+                        {format(new Date(invoice.created_at), 'MMM dd, yyyy')}
                       </span>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4" />
-                      <span>Tag</span>
-                      <span className="font-medium">{invoice.invoice_number}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      <span>Owner</span>
-                      <span className="font-medium">{clientData?.phone_number}</span>
-                    </div>
+                    {invoice.notes && (
+                      <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                        <div className="flex items-center gap-2 opacity-90">
+                          <Tag className="h-3.5 w-3.5" />
+                          <span>Note</span>
+                        </div>
+                        <span className="font-medium text-xs truncate max-w-[150px]">
+                          {invoice.notes}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </CardHeader>
 
-                <CardContent className="flex gap-2">
-                  <Button
-                    onClick={handleTopUpClick}
-                    className="flex-1 bg-white/20 hover:bg-white/30 text-white gap-2 border border-white/30 transition-all hover:scale-105"
-                  >
-                    <ArrowUpCircle className="h-4 w-4" />
-                    Top Up
-                  </Button>
-                  <Button
-                    onClick={() => fetchInvoiceDetails(invoice)}
-                    variant="outline"
-                    className="flex-1 border-white/30 text-white hover:bg-white/20 transition-all hover:scale-105"
-                  >
-                    <Receipt className="h-4 w-4 mr-2" />
-                    View Details
-                  </Button>
+                <CardContent className="pt-0 pb-4">
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleTopUpClick}
+                      size="lg"
+                      className="flex-1 bg-white text-primary hover:bg-white/90 gap-2 font-semibold shadow-lg transition-all hover:scale-105"
+                    >
+                      <ArrowUpCircle className="h-4 w-4" />
+                      Top Up
+                    </Button>
+                    <Button
+                      onClick={() => fetchInvoiceDetails(invoice)}
+                      size="lg"
+                      variant="outline"
+                      className="flex-1 border-white/40 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm transition-all hover:scale-105"
+                    >
+                      <Receipt className="h-4 w-4 mr-2" />
+                      Details
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
-          })
+          })}
+          </div>
         )}
-      </div>
+      </main>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-yellow-600">
-              <Receipt className="h-5 w-5" />
-              My Transactions
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader className="space-y-3 pb-4 border-b">
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Receipt className="h-5 w-5 text-primary" />
+              </div>
+              Transaction Details
             </DialogTitle>
+            {selectedInvoice && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Invoice: {selectedInvoice.invoice_number}</span>
+                <span>•</span>
+                <span>{format(new Date(selectedInvoice.created_at), 'MMM dd, yyyy')}</span>
+              </div>
+            )}
           </DialogHeader>
 
           <Tabs defaultValue="transactions" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="items">Invoice Items</TabsTrigger>
+              <TabsTrigger value="transactions" className="gap-2">
+                <Receipt className="h-4 w-4" />
+                Transactions
+              </TabsTrigger>
+              <TabsTrigger value="items" className="gap-2">
+                <Tag className="h-4 w-4" />
+                Items
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="transactions" className="space-y-4">
-              {transactions.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No transactions found
-                </p>
-              ) : (
-                <>
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-                    <div className="text-center">
-                      <div className="text-sm text-muted-foreground mb-1">
-                        📊 Total
-                      </div>
-                      <p className="text-xl font-bold">
-                        {selectedInvoice?.amount} Ksh
-                      </p>
+            <TabsContent value="transactions" className="space-y-6 mt-6">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <Calendar className="h-4 w-4" />
+                      Total Amount
                     </div>
-                    <div className="text-center">
-                      <div className="text-sm text-muted-foreground mb-1">
-                        🟢 Balance
-                      </div>
-                      <p className="text-xl font-bold">
-                        {selectedInvoice && calculateInvoiceBalance(selectedInvoice)} Ksh
-                      </p>
+                    <p className="text-2xl font-bold text-primary">
+                      Ksh {selectedInvoice?.amount.toLocaleString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="border-destructive/20 bg-destructive/5">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <ArrowUpCircle className="h-4 w-4" />
+                      Balance Due
                     </div>
-                  </div>
+                    <p className="text-2xl font-bold text-destructive">
+                      Ksh {selectedInvoice && calculateInvoiceBalance(selectedInvoice).toLocaleString()}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
 
-                  <div className="space-y-3">
-                    {transactions.map((transaction) => (
-                      <div
-                        key={transaction.id}
-                        className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-500">✓</span>
-                          <span>{format(new Date(transaction.date), 'dd-MMM-yyyy')}</span>
+              {/* Transactions List */}
+              {transactions.length === 0 ? (
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+                      <Receipt className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-center text-muted-foreground">
+                      No transactions recorded yet
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-sm text-muted-foreground">Payment History</h4>
+                  {transactions.map((transaction, index) => (
+                    <Card key={transaction.id} className="overflow-hidden">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success/10">
+                              <span className="text-success font-semibold">#{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium">Payment Received</p>
+                              <p className="text-sm text-muted-foreground">
+                                {format(new Date(transaction.date), 'MMMM dd, yyyy • h:mm a')}
+                              </p>
+                              {transaction.notes && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Note: {transaction.notes}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-success">
+                              +Ksh {transaction.amount.toLocaleString()}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 font-bold text-green-600">
-                          <Receipt className="h-4 w-4" />
-                          {transaction.amount} Ksh
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               )}
             </TabsContent>
 
-            <TabsContent value="items" className="space-y-4">
+            <TabsContent value="items" className="space-y-4 mt-6">
               {invoiceItems.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No invoice items found
-                </p>
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+                      <Tag className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-center text-muted-foreground">
+                      No invoice items available
+                    </p>
+                  </CardContent>
+                </Card>
               ) : (
                 <div className="space-y-3">
                   {invoiceItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium">{item.products?.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Qty: {item.quantity} × {item.price} Ksh
-                        </p>
-                      </div>
-                      <p className="font-bold">
-                        {item.quantity * item.price} Ksh
-                      </p>
-                    </div>
+                    <Card key={item.id}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{item.products?.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.quantity} × Ksh {item.price.toLocaleString()}
+                            </p>
+                          </div>
+                          <p className="text-lg font-bold">
+                            Ksh {(item.quantity * item.price).toLocaleString()}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               )}
