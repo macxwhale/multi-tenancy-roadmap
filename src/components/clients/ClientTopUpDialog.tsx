@@ -183,7 +183,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <div className="flex items-center gap-2 mb-2">
                   <Coins className="h-4 sm:h-5 w-4 sm:w-5 text-warning" />
                   <span className="font-semibold text-base sm:text-lg">
-                    ksh {client.totalInvoiced.toLocaleString()}
+                    ksh {Number(client?.totalInvoiced ?? 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Total Invoiced</div>
@@ -192,7 +192,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 sm:h-5 w-4 sm:w-5 text-destructive" />
                   <span className="font-semibold text-base sm:text-lg">
-                    ksh {(client.totalInvoiced - client.totalPaid).toLocaleString()}
+                    ksh {Number((client?.totalInvoiced ?? 0) - (client?.totalPaid ?? 0)).toLocaleString()}
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">Outstanding Balance</div>
@@ -230,7 +230,7 @@ export function ClientTopUpDialog({ open, onClose, client }: ClientTopUpDialogPr
             {selectedInvoice && (
               <div className="mt-2 p-3 border border-accent/30 rounded-lg bg-accent/5">
                 <p className="text-xs text-muted-foreground mb-1">Outstanding balance for this invoice:</p>
-                <p className="font-semibold text-base">ksh {invoiceBalance.toLocaleString()}</p>
+                <p className="font-semibold text-base">ksh {Number(invoiceBalance ?? 0).toLocaleString()}</p>
               </div>
             )}
           </div>

@@ -169,7 +169,7 @@ export function ClientTransactionsDialog({ open, onClose, client }: ClientTransa
                       <span className="text-sm text-muted-foreground">Total</span>
                     </div>
                     <div className="text-xl font-bold">
-                      KSH {totalInvoiced.toLocaleString()}
+                      KSH {Number(totalInvoiced ?? 0).toLocaleString()}
                     </div>
                   </div>
                   <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
@@ -178,7 +178,7 @@ export function ClientTransactionsDialog({ open, onClose, client }: ClientTransa
                       <span className="text-sm text-muted-foreground">Balance</span>
                     </div>
                     <div className="text-xl font-bold text-destructive">
-                      KSH {balance.toLocaleString()}
+                      KSH {Number(balance ?? 0).toLocaleString()}
                     </div>
                   </div>
                 </div>
