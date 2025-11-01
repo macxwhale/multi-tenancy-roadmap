@@ -314,7 +314,24 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
               return (
                 <TableRow 
                   key={invoice.id} 
-                  className={`hover:bg-gradient-to-r hover:${rowGradient} hover:text-white transition-all duration-200 border-b border-border/30 group`}
+                  className="relative hover:text-white transition-all duration-200 border-b border-border/30 group overflow-hidden"
+                  style={{
+                    background: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    const gradients = {
+                      0: 'linear-gradient(to right, rgb(139 92 246 / 0.9), rgb(168 85 247 / 0.9), rgb(217 70 239 / 0.9))',
+                      1: 'linear-gradient(to right, rgb(59 130 246 / 0.9), rgb(6 182 212 / 0.9), rgb(20 184 166 / 0.9))',
+                      2: 'linear-gradient(to right, rgb(16 185 129 / 0.9), rgb(34 197 94 / 0.9), rgb(132 204 22 / 0.9))',
+                      3: 'linear-gradient(to right, rgb(245 158 11 / 0.9), rgb(249 115 22 / 0.9), rgb(239 68 68 / 0.9))',
+                      4: 'linear-gradient(to right, rgb(236 72 153 / 0.9), rgb(244 63 94 / 0.9), rgb(239 68 68 / 0.9))',
+                      5: 'linear-gradient(to right, rgb(99 102 241 / 0.9), rgb(59 130 246 / 0.9), rgb(6 182 212 / 0.9))',
+                    };
+                    e.currentTarget.style.background = gradients[index % 6];
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
                   <TableCell className="font-semibold py-5 group-hover:text-white">{invoice.invoice_number}</TableCell>
                   <TableCell className="font-bold py-5 text-lg group-hover:text-white">{formatCurrency(invoice.amount)}</TableCell>
