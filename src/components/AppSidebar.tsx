@@ -47,7 +47,7 @@ export function AppSidebar() {
   const showText = state === "expanded" || (isMobile && open);
 
   const handleMobileMenuClick = () => {
-    if (isMobile && open) {
+    if (isMobile) {
       setOpen(false);
     }
   };
