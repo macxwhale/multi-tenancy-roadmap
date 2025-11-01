@@ -31,6 +31,15 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<Invoice | null>(null);
   const deleteInvoice = useDeleteInvoice();
+  
+  const rainbowGradients = [
+    "from-violet-500/90 via-purple-500/90 to-fuchsia-500/90",
+    "from-blue-500/90 via-cyan-500/90 to-teal-500/90",
+    "from-emerald-500/90 via-green-500/90 to-lime-500/90",
+    "from-amber-500/90 via-orange-500/90 to-red-500/90",
+    "from-pink-500/90 via-rose-500/90 to-red-500/90",
+    "from-indigo-500/90 via-blue-500/90 to-cyan-500/90",
+  ];
   const handleDownloadPDF = async (invoice: Invoice) => {
     try {
       const { data: client } = await supabase
@@ -180,187 +189,201 @@ export function InvoicesTable({ invoices, onEdit, onRefresh }: InvoicesTableProp
     <>
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
-        {invoices.map((invoice) => (
-          <div key={invoice.id} className="rounded-xl border border-border/40 bg-card shadow-sm p-4 space-y-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="font-semibold text-sm text-foreground">
-                  {invoice.invoice_number}
+        {invoices.map((invoice, index) => {
+          const gradientClass = rainbowGradients[index % rainbowGradients.length];
+          
+          return (
+            <div 
+              key={invoice.id} 
+              className={`group rounded-xl overflow-hidden bg-gradient-to-br ${gradientClass} hover:scale-[1.02] text-white transition-all duration-300 shadow-lg hover:shadow-2xl border-0 p-5 space-y-4`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="font-bold text-base">
+                    {invoice.invoice_number}
+                  </div>
+                  <div className="text-xs text-white/90 mt-1">
+                    {formatDateShort(invoice.created_at)}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  {formatDateShort(invoice.created_at)}
-                </div>
+                <Badge
+                  className={`${
+                    invoice.status === "paid"
+                      ? "bg-white/20 text-white border-white/30"
+                      : invoice.status === "pending"
+                      ? "bg-yellow-500/30 text-white border-yellow-300/50"
+                      : "bg-red-500/30 text-white border-red-300/50"
+                  } backdrop-blur-sm`}
+                >
+                  {invoice.status}
+                </Badge>
               </div>
-              <Badge
-                variant={
-                  invoice.status === "paid"
-                    ? "success"
-                    : invoice.status === "pending"
-                    ? "warning"
-                    : "destructive"
-                }
-              >
-                {invoice.status}
-              </Badge>
-            </div>
-            
-            <div className="space-y-2 pt-2 border-t border-border/30">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Amount</span>
-                <span className="font-semibold text-foreground text-base">
-                  {formatCurrency(invoice.amount)}
-                </span>
-              </div>
-              {invoice.notes && (
-                <div className="text-xs text-muted-foreground pt-1">
-                  {invoice.notes}
+              
+              <div className="space-y-3 pt-3 border-t border-white/20">
+                <div className="flex justify-between items-center">
+                  <span className="text-white/90 text-sm">Amount</span>
+                  <span className="font-bold text-white text-2xl">
+                    {formatCurrency(invoice.amount)}
+                  </span>
                 </div>
-              )}
+                {invoice.notes && (
+                  <div className="text-sm text-white/90 bg-black/10 rounded-lg p-3 backdrop-blur-sm">
+                    {invoice.notes}
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex flex-wrap gap-2 pt-3 border-t border-white/20">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleDownloadPDF(invoice)} 
+                  className="h-9 px-3 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm text-xs font-medium"
+                >
+                  <Download className="h-3.5 w-3.5 mr-1.5" />
+                  PDF
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handlePrintPDF(invoice)} 
+                  className="h-9 px-3 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm text-xs font-medium"
+                >
+                  <Printer className="h-3.5 w-3.5 mr-1.5" />
+                  Print
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleSendWhatsApp(invoice)} 
+                  className="h-9 px-3 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm text-xs font-medium"
+                >
+                  <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                  Send
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => onEdit(invoice)}
+                  className="h-9 px-3 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm text-xs font-medium"
+                >
+                  <Edit className="h-3.5 w-3.5 mr-1.5" />
+                  Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteClick(invoice)}
+                  className="h-9 px-3 bg-red-500/30 hover:bg-red-500/50 text-white border-0 backdrop-blur-sm text-xs font-medium"
+                >
+                  <Trash className="h-3.5 w-3.5 mr-1.5" />
+                  Delete
+                </Button>
+              </div>
             </div>
-            
-            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-border/30">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => handleDownloadPDF(invoice)} 
-                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
-              >
-                <Download className="h-3.5 w-3.5 mr-1" />
-                PDF
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => handlePrintPDF(invoice)} 
-                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
-              >
-                <Printer className="h-3.5 w-3.5 mr-1" />
-                Print
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => handleSendWhatsApp(invoice)} 
-                className="h-8 px-2.5 hover:bg-success/10 hover:text-success text-xs"
-              >
-                <MessageSquare className="h-3.5 w-3.5 mr-1" />
-                Send
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => onEdit(invoice)}
-                className="h-8 px-2.5 hover:bg-primary/10 hover:text-primary text-xs"
-              >
-                <Edit className="h-3.5 w-3.5 mr-1" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteClick(invoice)}
-                className="h-8 px-2.5 hover:bg-destructive/10 hover:text-destructive text-xs"
-              >
-                <Trash className="h-3.5 w-3.5 mr-1" />
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block rounded-xl border border-border/40 overflow-hidden bg-card shadow-sm">
+      <div className="hidden md:block rounded-xl border border-border/40 overflow-hidden bg-card shadow-lg">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/30">
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+            <TableRow className="bg-gradient-to-r from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 hover:from-violet-500/30 hover:via-purple-500/30 hover:to-fuchsia-500/30 border-b border-border/30">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 INVOICE #
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 AMOUNT
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 STATUS
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 DATE
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11 text-right">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12 text-right">
                 ACTIONS
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-card">
-            {invoices.map((invoice) => (
-              <TableRow key={invoice.id} className="hover:bg-muted/50 transition-colors duration-150 border-b border-border/30">
-                <TableCell className="font-medium py-5">{invoice.invoice_number}</TableCell>
-                <TableCell className="font-semibold py-5">{formatCurrency(invoice.amount)}</TableCell>
-                <TableCell className="py-5">
-                  <Badge
-                    variant={
-                      invoice.status === "paid"
-                        ? "success"
-                        : invoice.status === "pending"
-                        ? "warning"
-                        : "destructive"
-                    }
-                  >
-                    {invoice.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="py-5">{formatDateShort(invoice.created_at)}</TableCell>
-                <TableCell className="py-5">
-                  <div className="flex justify-end gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handleDownloadPDF(invoice)} 
-                      title="Download PDF"
-                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
+            {invoices.map((invoice, index) => {
+              const rowGradient = rainbowGradients[index % rainbowGradients.length];
+              
+              return (
+                <TableRow 
+                  key={invoice.id} 
+                  className={`hover:bg-gradient-to-r hover:${rowGradient} hover:text-white transition-all duration-200 border-b border-border/30 group`}
+                >
+                  <TableCell className="font-semibold py-5 group-hover:text-white">{invoice.invoice_number}</TableCell>
+                  <TableCell className="font-bold py-5 text-lg group-hover:text-white">{formatCurrency(invoice.amount)}</TableCell>
+                  <TableCell className="py-5">
+                    <Badge
+                      className={`group-hover:bg-white/20 group-hover:text-white group-hover:border-white/30 ${
+                        invoice.status === "paid"
+                          ? "bg-green-500/20 text-green-700 border-green-300"
+                          : invoice.status === "pending"
+                          ? "bg-yellow-500/20 text-yellow-700 border-yellow-300"
+                          : "bg-red-500/20 text-red-700 border-red-300"
+                      }`}
                     >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handlePrintPDF(invoice)} 
-                      title="Print"
-                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
-                    >
-                      <Printer className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handleSendWhatsApp(invoice)} 
-                      title="Send via WhatsApp"
-                      className="h-9 w-9 hover:bg-success/10 hover:text-success"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => onEdit(invoice)}
-                      title="Edit"
-                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteClick(invoice)}
-                      title="Delete"
-                      className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                      {invoice.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="py-5 group-hover:text-white">{formatDateShort(invoice.created_at)}</TableCell>
+                  <TableCell className="py-5">
+                    <div className="flex justify-end gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handleDownloadPDF(invoice)} 
+                        title="Download PDF"
+                        className="h-9 w-9 hover:bg-white/20 group-hover:text-white group-hover:hover:bg-white/30"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handlePrintPDF(invoice)} 
+                        title="Print"
+                        className="h-9 w-9 hover:bg-white/20 group-hover:text-white group-hover:hover:bg-white/30"
+                      >
+                        <Printer className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handleSendWhatsApp(invoice)} 
+                        title="Send via WhatsApp"
+                        className="h-9 w-9 hover:bg-white/20 group-hover:text-white group-hover:hover:bg-white/30"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => onEdit(invoice)}
+                        title="Edit"
+                        className="h-9 w-9 hover:bg-white/20 group-hover:text-white group-hover:hover:bg-white/30"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(invoice)}
+                        title="Delete"
+                        className="h-9 w-9 hover:bg-red-500/30 group-hover:text-white group-hover:hover:bg-red-500/50"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

@@ -50,10 +50,16 @@ export default function Invoices() {
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">Invoices</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent">
+            Invoices
+          </h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1.5 sm:mt-2">Create and manage customer invoices</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto h-11 text-base">
+        <Button 
+          onClick={() => setDialogOpen(true)} 
+          size="lg" 
+          className="gap-2 w-full sm:w-auto h-11 text-base bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 hover:from-violet-600 hover:via-purple-600 hover:to-fuchsia-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+        >
           <Plus className="h-5 w-5" />
           Create Invoice
         </Button>
