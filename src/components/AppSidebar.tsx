@@ -39,16 +39,16 @@ const menuGroups = [
 ];
 
 export function AppSidebar() {
-  const { state, setOpen, open } = useSidebar();
+  const { state, setOpen, open, openMobile, setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
   const [openGroups, setOpenGroups] = useState<string[]>(["Dashboards"]);
   const [clientDialogOpen, setClientDialogOpen] = useState(false);
   
-  const showText = state === "expanded" || (isMobile && open);
+  const showText = state === "expanded" || (isMobile && openMobile);
 
   const handleMobileMenuClick = () => {
     if (isMobile) {
-      setOpen(false);
+      setOpenMobile(false);
     }
   };
 
