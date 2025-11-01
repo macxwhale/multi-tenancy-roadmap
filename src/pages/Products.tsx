@@ -50,10 +50,16 @@ export default function Products() {
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">Products</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+            Products
+          </h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1.5 sm:mt-2">Manage your product catalog and inventory</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="lg" className="gap-2 w-full sm:w-auto h-11 text-base">
+        <Button 
+          onClick={() => setDialogOpen(true)} 
+          size="lg" 
+          className="gap-2 w-full sm:w-auto h-11 text-base bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+        >
           <Plus className="h-5 w-5" />
           Add Product
         </Button>

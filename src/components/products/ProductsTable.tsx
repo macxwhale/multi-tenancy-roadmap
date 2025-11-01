@@ -26,6 +26,15 @@ export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProp
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const deleteProduct = useDeleteProduct();
+  
+  const rainbowGradients = [
+    "from-emerald-500/90 via-teal-500/90 to-cyan-500/90",
+    "from-orange-500/90 via-amber-500/90 to-yellow-500/90",
+    "from-rose-500/90 via-pink-500/90 to-fuchsia-500/90",
+    "from-blue-500/90 via-indigo-500/90 to-violet-500/90",
+    "from-lime-500/90 via-green-500/90 to-emerald-500/90",
+    "from-red-500/90 via-orange-500/90 to-amber-500/90",
+  ];
 
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
@@ -44,99 +53,113 @@ export function ProductsTable({ products, onEdit, onRefresh }: ProductsTableProp
     <>
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
-        {products.map((product) => (
-          <div key={product.id} className="rounded-xl border border-border/40 bg-card shadow-sm p-4 space-y-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="font-semibold text-sm text-foreground">
-                  {product.name}
-                </div>
-                {product.description && (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {product.description}
+        {products.map((product, index) => {
+          const gradientClass = rainbowGradients[index % rainbowGradients.length];
+          
+          return (
+            <div 
+              key={product.id} 
+              className={`group rounded-xl overflow-hidden bg-gradient-to-br ${gradientClass} hover:scale-[1.02] text-white transition-all duration-300 shadow-lg hover:shadow-2xl border-0 p-5 space-y-4`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="font-bold text-base">
+                    {product.name}
                   </div>
-                )}
-              </div>
-              <div className="text-right ml-3">
-                <div className="font-semibold text-base text-foreground">
-                  {formatCurrency(product.price)}
+                  {product.description && (
+                    <div className="text-sm text-white/90 mt-2 bg-black/10 rounded-lg p-3 backdrop-blur-sm">
+                      {product.description}
+                    </div>
+                  )}
+                </div>
+                <div className="text-right ml-4">
+                  <div className="font-bold text-white text-2xl">
+                    {formatCurrency(product.price)}
+                  </div>
                 </div>
               </div>
+              
+              <div className="flex gap-2 pt-3 border-t border-white/20">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => onEdit(product)}
+                  className="flex-1 h-9 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm font-medium"
+                >
+                  <Edit className="h-3.5 w-3.5 mr-1.5" />
+                  Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDeleteClick(product)}
+                  className="h-9 px-4 bg-red-500/30 hover:bg-red-500/50 text-white border-0 backdrop-blur-sm font-medium"
+                >
+                  <Trash className="h-3.5 w-3.5 mr-1.5" />
+                  Delete
+                </Button>
+              </div>
             </div>
-            
-            <div className="flex gap-2 pt-2 border-t border-border/30">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => onEdit(product)}
-                className="flex-1 h-8 hover:bg-primary/10 hover:text-primary"
-              >
-                <Edit className="h-3.5 w-3.5 mr-1.5" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteClick(product)}
-                className="h-8 px-3 hover:bg-destructive/10 hover:text-destructive"
-              >
-                <Trash className="h-3.5 w-3.5 mr-1.5" />
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block rounded-xl border border-border/40 overflow-hidden bg-card shadow-sm">
+      <div className="hidden md:block rounded-xl border border-border/40 overflow-hidden bg-card shadow-lg">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/20 hover:bg-muted/20 border-b border-border/30">
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+            <TableRow className="bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:via-teal-500/30 hover:to-cyan-500/30 border-b border-border/30">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 NAME
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 DESCRIPTION
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12">
                 PRICE
               </TableHead>
-              <TableHead className="text-muted-foreground font-medium text-xs tracking-wider h-11 text-right">
+              <TableHead className="text-foreground font-semibold text-sm tracking-wider h-12 text-right">
                 ACTIONS
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-card">
-            {products.map((product) => (
-              <TableRow key={product.id} className="hover:bg-muted/50 transition-colors duration-150 border-b border-border/30">
-                <TableCell className="font-medium py-5">{product.name}</TableCell>
-                <TableCell className="text-muted-foreground py-5">{product.description || "-"}</TableCell>
-                <TableCell className="font-semibold py-5">{formatCurrency(product.price)}</TableCell>
-                <TableCell className="py-5">
-                  <div className="flex justify-end gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => onEdit(product)}
-                      title="Edit"
-                      className="h-9 w-9 hover:bg-primary/10 hover:text-primary"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteClick(product)}
-                      title="Delete"
-                      className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {products.map((product, index) => {
+              const rowGradient = rainbowGradients[index % rainbowGradients.length];
+              
+              return (
+                <TableRow 
+                  key={product.id} 
+                  className={`hover:bg-gradient-to-r hover:${rowGradient} hover:text-white transition-all duration-200 border-b border-border/30 group`}
+                >
+                  <TableCell className="font-semibold py-5 group-hover:text-white">{product.name}</TableCell>
+                  <TableCell className="py-5 group-hover:text-white/90">{product.description || "-"}</TableCell>
+                  <TableCell className="font-bold py-5 text-lg group-hover:text-white">{formatCurrency(product.price)}</TableCell>
+                  <TableCell className="py-5">
+                    <div className="flex justify-end gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => onEdit(product)}
+                        title="Edit"
+                        className="h-9 w-9 hover:bg-white/20 group-hover:text-white group-hover:hover:bg-white/30"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(product)}
+                        title="Delete"
+                        className="h-9 w-9 hover:bg-red-500/30 group-hover:text-white group-hover:hover:bg-red-500/50"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
